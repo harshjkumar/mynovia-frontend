@@ -50,8 +50,8 @@ export default function InspirationCTA({ data }) {
             {content.subtext || 'Introducing our latest Spring Collection: an ethereal tribute to untamed beauty. Capturing the quiet power of a woman in her element—adrift in magic and motion.'}
           </motion.p>
           <motion.div variants={textVariants}>
-            <Link href="/dresses" className="inline-block border-b border-charcoal pb-1 text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:text-gold hover:border-gold transition-colors">
-              VIEW COLLECTION
+            <Link href={content.cta_link || '/dresses'} className="inline-block border-b border-charcoal pb-1 text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:text-gold hover:border-gold transition-colors">
+              {content.cta_text || 'VIEW COLLECTION'}
             </Link>
           </motion.div>
         </motion.div>

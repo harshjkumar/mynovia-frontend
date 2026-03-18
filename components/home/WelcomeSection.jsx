@@ -91,15 +91,17 @@ export default function WelcomeSection({ data, dresses = [], accessories = [] })
              className="w-full md:w-[40%] lg:w-[30%] bg-white p-10 md:p-8 lg:p-12 shadow-md rounded-sm border border-pink-100 flex flex-col items-center justify-center text-center aspect-square md:aspect-auto md:h-full min-h-[400px] z-10"
           >
             <span className="text-3xl mb-6">💍</span>
-            <h3 className="font-heading text-2xl lg:text-3xl text-charcoal mb-4">Find Your Dream Dress</h3>
+            <h3 className="font-heading text-2xl lg:text-3xl text-charcoal mb-4">
+              {content.cta_heading || 'Find Your Dream Dress'}
+            </h3>
             <p className="font-sans text-sm text-body-gray mb-8 leading-relaxed">
-              Book a private fitting session with our bridal experts. We ensure a personalized experience to find the dress that tells your unique story.
+              {content.cta_text || 'Book a private fitting session with our bridal experts. We ensure a personalized experience to find the dress that tells your unique story.'}
             </p>
             <Link 
-              href="/agenda-tu-cita" 
+              href={content.cta_btn_link || '/agenda-tu-cita'} 
               className="px-8 py-4 bg-charcoal text-white text-[10px] font-sans font-semibold tracking-[2px] uppercase hover:bg-gold transition-colors w-full sm:w-auto"
             >
-              Book an Appointment
+              {content.cta_btn_text || 'Book an Appointment'}
             </Link>
           </motion.div>
 

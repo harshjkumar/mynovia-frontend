@@ -3,7 +3,8 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
-export default function FeaturedAccessories({ accessories = [] }) {
+export default function FeaturedAccessories({ data, accessories = [] }) {
+  const content = data || {}
   const scrollRef = useRef(null)
   const sectionRef = useRef(null)
 
@@ -39,10 +40,14 @@ export default function FeaturedAccessories({ accessories = [] }) {
         
         {/* Text and context left block */}
         <motion.div style={{ opacity, y: yText }} className="w-full lg:w-1/3 flex flex-col shrink-0">
-          <span className="text-[10px] font-sans tracking-[3px] text-body-gray uppercase mb-4">MY NOVIA ACCESSORIES</span>
-          <h2 className="font-heading text-4xl lg:text-5xl text-charcoal mb-6 font-light italic">Refined & Memorable</h2>
+          <span className="text-[10px] font-sans tracking-[3px] text-body-gray uppercase mb-4">
+            {content.eyebrow || 'MY NOVIA ACCESSORIES'}
+          </span>
+          <h2 className="font-heading text-4xl lg:text-5xl text-charcoal mb-6 font-light italic">
+            {content.heading || 'Refined & Memorable'}
+          </h2>
           <p className="font-body text-body-gray mb-12 text-sm leading-relaxed max-w-sm">
-            For the bride who wishes to shine with her own light. With sculpted details, intricate lace, and dazzling pieces designed to complement your look from the first to the last dance.
+            {content.body || 'For the bride who wishes to shine with her own light. With sculpted details, intricate lace, and dazzling pieces designed to complement your look from the first to the last dance.'}
           </p>
           
           <div className="flex items-center gap-6 mb-12">
@@ -57,7 +62,7 @@ export default function FeaturedAccessories({ accessories = [] }) {
           </div>
 
           <div className="relative aspect-[3/4] overflow-hidden w-full max-w-[350px] group/cta shadow-sm">
-            <img src="https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=800&q=80" alt="Accessories detail" className="w-full h-full object-cover transition-transform duration-1000 group-hover/cta:scale-105" />
+            <img src={content.banner_image || "https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=800&q=80"} alt="Accessories detail" className="w-full h-full object-cover transition-transform duration-1000 group-hover/cta:scale-105" />
             <div className="absolute bottom-6 left-6">
               <Link href="/accessories" className="bg-white/80 hover:bg-white text-[10px] font-sans tracking-[2px] font-medium uppercase px-5 py-3 transition-colors shadow-sm">
                 SHOP ACCESSORIES

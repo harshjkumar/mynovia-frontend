@@ -2,7 +2,8 @@
 import { useRef } from 'react'
 import { motion } from 'framer-motion'
 
-export default function ReviewsSection({ reviews = [] }) {
+export default function ReviewsSection({ data, reviews = [] }) {
+  const content = data || {}
   const sectionRef = useRef(null)
 
   const displayReviews = reviews.length > 0 ? reviews : [
@@ -33,8 +34,12 @@ export default function ReviewsSection({ reviews = [] }) {
            transition={{ duration: 0.8 }}
            className="text-center mb-16"
         >
-          <span className="text-[10px] font-sans tracking-[3px] text-body-gray uppercase mb-3 block">TESTIMONIALS</span>
-          <h2 className="font-heading text-4xl lg:text-5xl font-light text-charcoal">What our <em>brides</em> say</h2>
+          <span className="text-[10px] font-sans tracking-[3px] text-body-gray uppercase mb-3 block">
+            {content.eyebrow || 'TESTIMONIALS'}
+          </span>
+          <h2 className="font-heading text-4xl lg:text-5xl font-light text-charcoal">
+            {content.heading || <>What our <em>brides</em> say</>}
+          </h2>
         </motion.div>
 
         <motion.div 

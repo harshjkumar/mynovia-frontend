@@ -15,7 +15,7 @@ export default function ContentEditorPage() {
       data.forEach(s => { 
         map[s.section_name] = s.content || {} 
       })
-      setSections(map)
+      setSections(prev => ({ ...prev, ...map }))
       console.log('Fetched sections:', map)
     }).catch(err => {
       console.error('Error fetching sections:', err)
@@ -352,21 +352,90 @@ export default function ContentEditorPage() {
                 value={sections.welcome?.body || ''}
                 onChange={e => updateSection('welcome', 'body', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
+              
+              <div className="border-t border-gray-100 pt-4 mt-4">
+                <p className="text-xs font-sans font-semibold text-charcoal mb-3">Center CTA Card</p>
+                <input type="text" placeholder="Dream Dress Heading"
+                  value={sections.welcome?.cta_heading || ''}
+                  onChange={e => updateSection('welcome', 'cta_heading', e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold mb-3" />
+                <textarea placeholder="Dream Dress Text" rows={2}
+                  value={sections.welcome?.cta_text || ''}
+                  onChange={e => updateSection('welcome', 'cta_text', e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y mb-3" />
+                <div className="flex gap-3">
+                  <input type="text" placeholder="Button Text"
+                    value={sections.welcome?.cta_btn_text || ''}
+                    onChange={e => updateSection('welcome', 'cta_btn_text', e.target.value)}
+                    className="flex-1 px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+                  <input type="text" placeholder="Button Link"
+                    value={sections.welcome?.cta_btn_link || ''}
+                    onChange={e => updateSection('welcome', 'cta_btn_link', e.target.value)}
+                    className="flex-1 px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+                </div>
+              </div>
             </div>
             <button onClick={() => saveSection('welcome')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE WELCOME</button>
           </div>
 
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Appointment CTA</h3>
-            <input type="text" placeholder="Heading"
-              value={sections.appointment_cta?.heading || ''}
-              onChange={e => updateSection('appointment_cta', 'heading', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold mb-3" />
-            <input type="text" placeholder="Background image URL"
-              value={sections.appointment_cta?.bg_image || ''}
-              onChange={e => updateSection('appointment_cta', 'bg_image', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
-            <button onClick={() => saveSection('appointment_cta')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE</button>
+            <div className="space-y-4">
+              <input type="text" placeholder="Eyebrow text"
+                value={sections.appointment_cta?.eyebrow || ''}
+                onChange={e => updateSection('appointment_cta', 'eyebrow', e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+              <input type="text" placeholder="Heading"
+                value={sections.appointment_cta?.heading || ''}
+                onChange={e => updateSection('appointment_cta', 'heading', e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+              <textarea placeholder="Body Subtext" rows={2}
+                value={sections.appointment_cta?.subtext || ''}
+                onChange={e => updateSection('appointment_cta', 'subtext', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
+              
+              <div className="flex gap-3">
+                <input type="text" placeholder="Button Text"
+                  value={sections.appointment_cta?.cta_text || 'BOOK AN APPOINTMENT'}
+                  onChange={e => updateSection('appointment_cta', 'cta_text', e.target.value)}
+                  className="flex-1 px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+                <input type="text" placeholder="Button Link"
+                  value={sections.appointment_cta?.cta_link || '/agenda-tu-cita'}
+                  onChange={e => updateSection('appointment_cta', 'cta_link', e.target.value)}
+                  className="flex-1 px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+              </div>
+
+              <div>
+                <label className="block text-xs font-sans text-body-gray mb-2">Background Image</label>
+                {sections.appointment_cta?.bg_image ? (
+                  <div className="relative">
+                    <img src={sections.appointment_cta.bg_image} className="w-full h-32 object-cover rounded" />
+                    <label className="absolute top-1 right-1 cursor-pointer bg-white/90 px-2 py-1 text-[10px] font-sans rounded hover:bg-white text-charcoal">
+                      Change
+                      <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          const result = await adminUploadMedia(file, 'home')
+                          updateSection('appointment_cta', 'bg_image', result.url)
+                        }
+                      }} />
+                    </label>
+                  </div>
+                ) : (
+                  <label className="block border border-dashed border-gray-300 p-4 text-center cursor-pointer text-xs">
+                    Upload Background Image
+                    <input type="file" className="hidden" onChange={async (e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        const result = await adminUploadMedia(file, 'home')
+                        updateSection('appointment_cta', 'bg_image', result.url)
+                      }
+                    }} />
+                  </label>
+                )}
+              </div>
+            </div>
+            <button onClick={() => saveSection('appointment_cta')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE APPOINTMENT CTA</button>
           </div>
 
           <div className="bg-white p-6 rounded-lg border border-gray-200">
@@ -442,17 +511,91 @@ export default function ContentEditorPage() {
                 value={sections.inspiration?.subtext || ''}
                 onChange={e => updateSection('inspiration', 'subtext', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
+              <div className="flex gap-3">
+                <input type="text" placeholder="Button Text"
+                  value={sections.inspiration?.cta_text || 'VIEW COLLECTION'}
+                  onChange={e => updateSection('inspiration', 'cta_text', e.target.value)}
+                  className="flex-1 px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+                <input type="text" placeholder="Button Link"
+                  value={sections.inspiration?.cta_link || '/dresses'}
+                  onChange={e => updateSection('inspiration', 'cta_link', e.target.value)}
+                  className="flex-1 px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+              </div>
             </div>
             <button onClick={() => saveSection('inspiration')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE INSPIRATION</button>
           </div>
 
           <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Featured Reviews Title</h3>
-            <input type="text" placeholder="Review section heading"
-              value={sections.reviews?.heading || ''}
-              onChange={e => updateSection('reviews', 'heading', e.target.value)}
+            <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Featured Dresses Section</h3>
+            <input type="text" placeholder="Section Heading"
+              value={sections.featured_dresses?.heading || ''}
+              onChange={e => updateSection('featured_dresses', 'heading', e.target.value)}
               className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold mb-3" />
-            <button onClick={() => saveSection('reviews')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE</button>
+            <button onClick={() => saveSection('featured_dresses')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE DRESSES SECTION</button>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg border border-gray-200">
+            <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Featured Accessories Section</h3>
+            <div className="space-y-4">
+              <input type="text" placeholder="Eyebrow text"
+                value={sections.featured_accessories?.eyebrow || ''}
+                onChange={e => updateSection('featured_accessories', 'eyebrow', e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+              <input type="text" placeholder="Heading"
+                value={sections.featured_accessories?.heading || ''}
+                onChange={e => updateSection('featured_accessories', 'heading', e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+              <textarea placeholder="Body text" rows={3}
+                value={sections.featured_accessories?.body || ''}
+                onChange={e => updateSection('featured_accessories', 'body', e.target.value)}
+                className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
+              
+              <div>
+                <label className="block text-xs font-sans text-body-gray mb-2">Banner Image</label>
+                {sections.featured_accessories?.banner_image ? (
+                  <div className="relative">
+                    <img src={sections.featured_accessories.banner_image} className="w-full h-32 object-cover rounded" />
+                    <label className="absolute top-1 right-1 cursor-pointer bg-white/90 px-2 py-1 text-[10px] font-sans rounded hover:bg-white text-charcoal">
+                      Change
+                      <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
+                        const file = e.target.files?.[0]
+                        if (file) {
+                          const result = await adminUploadMedia(file, 'home')
+                          updateSection('featured_accessories', 'banner_image', result.url)
+                        }
+                      }} />
+                    </label>
+                  </div>
+                ) : (
+                  <label className="block border border-dashed border-gray-300 p-4 text-center cursor-pointer text-xs">
+                    Upload Banner Image
+                    <input type="file" className="hidden" onChange={async (e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        const result = await adminUploadMedia(file, 'home')
+                        updateSection('featured_accessories', 'banner_image', result.url)
+                      }
+                    }} />
+                  </label>
+                )}
+              </div>
+            </div>
+            <button onClick={() => saveSection('featured_accessories')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE ACCESSORIES SECTION</button>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg border border-gray-200">
+            <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Reviews Section</h3>
+            <div className="space-y-4">
+              <input type="text" placeholder="Eyebrow text"
+                value={sections.reviews?.eyebrow || ''}
+                onChange={e => updateSection('reviews', 'eyebrow', e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+              <input type="text" placeholder="Heading"
+                value={sections.reviews?.heading || ''}
+                onChange={e => updateSection('reviews', 'heading', e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+            </div>
+            <button onClick={() => saveSection('reviews')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE REVIEWS SECTION</button>
           </div>
         </div>
       )}
@@ -753,10 +896,20 @@ export default function ContentEditorPage() {
             </div>
             <div>
               <label className="block text-xs font-sans text-body-gray mb-2">Business Hours</label>
-              <input type="text" placeholder="Business hours"
+              <textarea placeholder="Business hours"
+                rows={3}
                 value={sections.contact?.hours || ''}
                 onChange={e => updateSection('contact', 'hours', e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
+            </div>
+            <div>
+              <label className="block text-xs font-sans text-body-gray mb-2">Google Maps Embed URL</label>
+              <textarea placeholder="Paste the src URL from Google Maps embed code"
+                rows={3}
+                value={sections.contact?.map_embed_url || ''}
+                onChange={e => updateSection('contact', 'map_embed_url', e.target.value)}
+                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
+              <p className="text-[10px] text-body-gray mt-1">Example: https://www.google.com/maps/embed?pb=...</p>
             </div>
           </div>
           <button 

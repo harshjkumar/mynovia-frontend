@@ -47,10 +47,10 @@ export default async function HomePage() {
     <>
       <HeroBanner data={sectionMap.hero} />
       <WelcomeSection data={sectionMap.welcome} dresses={dresses} accessories={accessories} />
-      <FeaturedDresses dresses={dresses} />
+      <FeaturedDresses data={sectionMap.featured_dresses} dresses={dresses} />
       <InspirationCTA data={sectionMap.inspiration} />
-      <FeaturedAccessories accessories={accessories} />
-      <ReviewsSection reviews={reviews} />
+      <FeaturedAccessories data={sectionMap.featured_accessories} accessories={accessories} />
+      <ReviewsSection data={sectionMap.reviews} reviews={reviews} />
       <AppointmentCTA data={sectionMap.appointment_cta} />
     </>
   )

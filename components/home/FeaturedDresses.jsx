@@ -3,7 +3,8 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
-export default function FeaturedDresses({ dresses = [] }) {
+export default function FeaturedDresses({ data, dresses = [] }) {
+  const content = data || {}
   const scrollRef = useRef(null)
   const sectionRef = useRef(null)
 
@@ -40,7 +41,9 @@ export default function FeaturedDresses({ dresses = [] }) {
     <section ref={sectionRef} className="py-16 md:py-24 bg-[#FAF9F6] overflow-hidden">
       <div className="max-w-[1600px] mx-auto px-6 md:px-12">
         <motion.div style={{ opacity, y: yText }} className="flex items-end justify-between mb-8 pb-4">
-          <h2 className="font-heading text-4xl font-light text-charcoal">Featured Dresses</h2>
+          <h2 className="font-heading text-4xl font-light text-charcoal">
+            {content.heading || 'Featured Dresses'}
+          </h2>
           <Link href="/dresses" className="text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:text-gold transition-colors border-b border-transparent hover:border-gold pb-1 whitespace-nowrap ml-4">
             VIEW ALL
           </Link>

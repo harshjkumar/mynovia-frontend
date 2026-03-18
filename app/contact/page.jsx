@@ -1,11 +1,27 @@
 'use client'
-import { useState } from 'react'
-import { submitContactForm } from '@/lib/api'
+import { useState, useEffect } from 'react'
+import { submitContactForm, fetchSections } from '@/lib/api'
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [status, setStatus] = useState(null)
   const [sending, setSending] = useState(false)
+  const [content, setContent] = useState({
+    address: 'Almería, Spain',
+    phone: '+34 950 450 518',
+    email: 'info@mynovia.es',
+    hours: 'Monday - Friday: 10:00 - 14:00, 17:00 - 20:30\nSaturday: 10:00 - 14:00\nSunday: Closed',
+    map_embed_url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3186.8!2d-2.46!3d36.84!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDUwJzI0LjAiTiAywrAyNyczNi4wIlc!5e0!3m2!1sen!2ses!4v1'
+  })
+
+  useEffect(() => {
+    fetchSections().then(data => {
+      const contactSection = data.find(s => s.section_name === 'contact')
+      if (contactSection?.content) {
+        setContent(contactSection.content)
+      }
+    }).catch(err => console.error('Error fetching contact content:', err))
+  }, [])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -96,28 +112,26 @@ export default function ContactPage() {
         <div className="space-y-8">
           <div>
             <h3 className="font-sans text-[11px] font-semibold tracking-[2.5px] text-charcoal uppercase mb-4">Address</h3>
-            <p className="font-body text-body-gray text-sm">Almería, Spain</p>
+            <p className="font-body text-body-gray text-sm whitespace-pre-line">{content.address}</p>
           </div>
           <div>
             <h3 className="font-sans text-[11px] font-semibold tracking-[2.5px] text-charcoal uppercase mb-4">Phone</h3>
-            <a href="tel:+34950450518" className="font-body text-body-gray text-sm hover:text-gold transition-colors">+34 950 450 518</a>
+            <a href={`tel:${content.phone?.replace(/\s/g, '')}`} className="font-body text-body-gray text-sm hover:text-gold transition-colors">{content.phone}</a>
           </div>
           <div>
             <h3 className="font-sans text-[11px] font-semibold tracking-[2.5px] text-charcoal uppercase mb-4">Email</h3>
-            <a href="mailto:info@mynovia.es" className="font-body text-body-gray text-sm hover:text-gold transition-colors">info@mynovia.es</a>
+            <a href={`mailto:${content.email}`} className="font-body text-body-gray text-sm hover:text-gold transition-colors">{content.email}</a>
           </div>
           <div>
             <h3 className="font-sans text-[11px] font-semibold tracking-[2.5px] text-charcoal uppercase mb-4">Hours</h3>
-            <div className="font-body text-body-gray text-sm space-y-1">
-              <p>Monday - Friday: 10:00 - 14:00, 17:00 - 20:30</p>
-              <p>Saturday: 10:00 - 14:00</p>
-              <p>Sunday: Closed</p>
+            <div className="font-body text-body-gray text-sm whitespace-pre-line">
+              {content.hours}
             </div>
           </div>
 
           <div className="aspect-video bg-cream overflow-hidden mt-6">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3186.8!2d-2.46!3d36.84!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDUwJzI0LjAiTiAywrAyNyczNi4wIlc!5e0!3m2!1sen!2ses!4v1"
+              src={content.map_embed_url}
               width="100%"
               height="100%"
               style={{ border: 0 }}
