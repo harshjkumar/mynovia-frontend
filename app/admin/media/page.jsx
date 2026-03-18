@@ -1,0 +1,79 @@
+'use client'
+import { useState, useEffect } from 'react'
+import { fetchMedia, adminUploadMedia, adminDeleteMedia } from '@/lib/api'
+import ImageUploader from '@/components/admin/ImageUploader'
+
+export default function AdminMediaPage() {
+  const [media, setMedia] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [uploading, setUploading] = useState(false)
+  const [folder, setFolder] = useState('general')
+
+  useEffect(() => { load() }, [folder])
+
+  async function load() {
+    setLoading(true)
+    try { setMedia(await fetchMedia(folder)) } catch { setMedia([]) }
+    setLoading(false)
+  }
+
+  async function handleUpload(files) {
+    setUploading(true)
+    for (const file of files) {
+      try { await adminUploadMedia(file, folder) } catch {}
+    }
+    setUploading(false)
+    load()
+  }
+
+  async function handleDelete(id) {
+    if (!confirm('Delete this file?')) return
+    try { await adminDeleteMedia(id); setMedia(prev => prev.filter(m => m.id !== id)) } catch {}
+  }
+
+  const folders = ['general', 'gallery', 'hero', 'about']
+
+  return (
+    <div>
+      <h1 className="text-2xl font-heading text-charcoal mb-8">Media Library</h1>
+
+      <div className="flex gap-2 mb-6">
+        {folders.map(f => (
+          <button key={f} onClick={() => setFolder(f)}
+            className={`px-4 py-2 text-xs font-sans tracking-wider border transition-colors ${
+              folder === f ? 'bg-charcoal text-white border-charcoal' : 'border-gray-300 text-body-gray hover:border-gold'
+            }`}>
+            {f.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      <div className="mb-8">
+        <ImageUploader onUpload={handleUpload} label={uploading ? 'Uploading...' : 'Upload files to ' + folder} />
+      </div>
+
+      {loading ? (
+        <p className="text-center text-body-gray py-8">Loading...</p>
+      ) : media.length === 0 ? (
+        <p className="text-center text-body-gray py-8">No files in this folder</p>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {media.map(item => (
+            <div key={item.id} className="group relative aspect-square bg-cream overflow-hidden rounded">
+              <img src={item.image_url} alt={item.file_name} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                <button onClick={() => handleDelete(item.id)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 text-white text-xs px-3 py-1.5 rounded font-sans">
+                  Delete
+                </button>
+              </div>
+              <p className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] font-sans px-2 py-1 truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                {item.file_name}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
