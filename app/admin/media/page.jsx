@@ -7,9 +7,9 @@ export default function AdminMediaPage() {
   const [media, setMedia] = useState([])
   const [loading, setLoading] = useState(true)
   const [uploading, setUploading] = useState(false)
-  const [folder, setFolder] = useState('general')
+  const folder = 'gallery'
 
-  useEffect(() => { load() }, [folder])
+  useEffect(() => { load() }, [])
 
   async function load() {
     setLoading(true)
@@ -31,31 +31,18 @@ export default function AdminMediaPage() {
     try { await adminDeleteMedia(id); setMedia(prev => prev.filter(m => m.id !== id)) } catch {}
   }
 
-  const folders = ['general', 'gallery', 'hero', 'about']
-
   return (
     <div>
-      <h1 className="text-2xl font-heading text-charcoal mb-8">Media Library</h1>
-
-      <div className="flex gap-2 mb-6">
-        {folders.map(f => (
-          <button key={f} onClick={() => setFolder(f)}
-            className={`px-4 py-2 text-xs font-sans tracking-wider border transition-colors ${
-              folder === f ? 'bg-charcoal text-white border-charcoal' : 'border-gray-300 text-body-gray hover:border-gold'
-            }`}>
-            {f.toUpperCase()}
-          </button>
-        ))}
-      </div>
+      <h1 className="text-2xl font-heading text-charcoal mb-8">Gallery</h1>
 
       <div className="mb-8">
-        <ImageUploader onUpload={handleUpload} label={uploading ? 'Uploading...' : 'Upload files to ' + folder} />
+        <ImageUploader onUpload={handleUpload} label={uploading ? 'Uploading...' : 'Upload files to gallery'} />
       </div>
 
       {loading ? (
         <p className="text-center text-body-gray py-8">Loading...</p>
       ) : media.length === 0 ? (
-        <p className="text-center text-body-gray py-8">No files in this folder</p>
+        <p className="text-center text-body-gray py-8">No files in gallery</p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {media.map(item => (

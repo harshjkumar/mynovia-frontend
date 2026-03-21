@@ -19,14 +19,13 @@ export default function DressesPage() {
   useEffect(() => {
     fetchDresses().then(data => setDresses(data || [])).catch(() => setDresses([]))
     
-    fetchCategories().then(data => {
+    fetchCategories('dress').then(data => {
       if (data && Array.isArray(data)) {
         const enrichedCategories = data
-          .filter(cat => ['bride', 'party', 'godmother', 'cocktail'].includes(cat.slug))
           .map(cat => ({
             ...cat,
             title: cat.name,
-            description: categoryDescriptions[cat.slug] || cat.description || ''
+            description: categoryDescriptions[cat.slug] || cat.description || `Discover our exclusive ${cat.name} collection.`
           }))
         setCategories(enrichedCategories)
       }
@@ -82,8 +81,36 @@ export default function DressesPage() {
         </motion.div>
       </section>
 
-      {/* Category Sections */}
-      <div id="collections" className="py-24 bg-[#FAF9F6] relative z-20">
+      {/* Main Content Area */}
+      <div id="collections" className="bg-[#FAF9F6] relative z-20">
+        
+        {/* Categories Grid Header */}
+        <section className="pt-24 pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
+          <h2 className="font-heading text-4xl lg:text-5xl text-[#333] mb-4 font-light">Shop by Category</h2>
+          <p className="font-body text-[#7a7a7a] text-sm max-w-xl mx-auto mb-16">
+            Explore our curated collections designed to make you shine on your unforgettable day.
+          </p>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {categoriesData.map(cat => (
+              <Link key={cat.slug} href={`/dresses/${cat.slug}`} className="group block text-left">
+                <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe8e3] mb-4 group-hover:shadow-lg transition-shadow duration-500">
+                  <img
+                    src={cat.image_url || cat.image || '/images/cat_bride.png'}
+                    alt={cat.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
+                </div>
+                <h3 className="font-heading text-2xl text-[#333] font-light mb-1 group-hover:text-gold transition-colors">{cat.title}</h3>
+                <span className="text-[10px] uppercase tracking-[2px] font-sans text-[#a09e9e] border-b border-transparent group-hover:border-gold group-hover:text-gold transition-colors pb-1">Shop Collection</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Category Specific Sections */}
+
         {categoriesData.map((cat, index) => {
           const catDresses = dresses.filter(d => d.categories?.slug === cat.slug || false)
           const isEven = index % 2 === 0

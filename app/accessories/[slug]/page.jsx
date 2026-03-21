@@ -1,19 +1,35 @@
 import Link from 'next/link'
+import AccessoryCategoryCollection from '@/components/catalog/AccessoryCategoryCollection'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'
 
 export async function generateMetadata({ params }) {
   try {
     const res = await fetch(`${API}/accessories/${params.slug}`)
-    if (!res.ok) return { title: 'Accessory — My Novia' }
-    const acc = await res.json()
-    return {
-      title: `${acc.name} — My Novia`,
-      description: acc.description || `Discover ${acc.name} at My Novia. Exclusive accessories in Almería.`
+    if (res.ok) {
+        const acc = await res.json()
+        return {
+          title: `${acc.name} — My Novia`,
+          description: acc.description || `Discover ${acc.name} at My Novia. Exclusive accessories in Almería.`
+        }
     }
-  } catch {
-    return { title: 'Accessory — My Novia' }
-  }
+  } catch {}
+  
+  try {
+     const catRes = await fetch(`${API}/categories?type=accessory`)
+     if (catRes.ok) {
+       const cats = await catRes.json()
+       const cat = cats.find(c => c.slug === params.slug)
+       if (cat) {
+         return {
+           title: `${cat.name} Accessories | My Novia`,
+           description: `Explore our collection of ${cat.name} accessories.`
+         }
+       }
+     }
+  } catch {}
+
+  return { title: 'Accessory — My Novia' }
 }
 
 async function getAccessory(slug) {
@@ -26,13 +42,35 @@ async function getAccessory(slug) {
   }
 }
 
+async function getCategory(slug) {
+  try {
+    const res = await fetch(`${API}/categories?type=accessory`, { cache: 'no-store' })
+    if (!res.ok) return null
+    const cats = await res.json()
+    return cats.find(c => c.slug === slug)
+  } catch {
+    return null
+  }
+}
+
 export default async function AccessoryDetailPage({ params }) {
   const acc = await getAccessory(params.slug)
 
   if (!acc) {
+    const category = await getCategory(params.slug)
+    if (category) {
+      return (
+        <AccessoryCategoryCollection 
+          categorySlug={category.slug}
+          categoryName={category.name}
+          coverImage={category.image_url || "https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=800&q=80"}
+          description={category.description || `Explore our latest collection of ${category.name} accessories.`}
+        />
+      )
+    }
     return (
       <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-        <h1 className="section-heading mb-4">Accessory not found</h1>
+        <h1 className="section-heading mb-4">Accessory or Category not found</h1>
         <Link href="/accessories" className="btn-gold">View Collection</Link>
       </div>
     )

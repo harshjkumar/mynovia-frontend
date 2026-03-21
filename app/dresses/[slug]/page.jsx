@@ -1,19 +1,35 @@
 import Link from 'next/link'
+import CategoryCollection from '@/components/catalog/CategoryCollection'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'
 
 export async function generateMetadata({ params }) {
   try {
     const res = await fetch(`${API}/dresses/${params.slug}`)
-    if (!res.ok) return { title: 'Dress — My Novia' }
-    const dress = await res.json()
-    return {
-      title: `${dress.name} — My Novia`,
-      description: dress.description || `Discover ${dress.name} at My Novia. Exclusive wedding dress in Almería.`
+    if (res.ok) {
+      const dress = await res.json()
+      return {
+        title: `${dress.name} — My Novia`,
+        description: dress.description || `Discover ${dress.name} at My Novia. Exclusive wedding dress in Almería.`
+      }
     }
-  } catch {
-    return { title: 'Dress — My Novia' }
-  }
+  } catch {}
+  
+  try {
+     const catRes = await fetch(`${API}/categories?type=dress`)
+     if (catRes.ok) {
+       const cats = await catRes.json()
+       const cat = cats.find(c => c.slug === params.slug)
+       if (cat) {
+         return {
+           title: `${cat.name} Dresses | My Novia`,
+           description: `Explore our collection of ${cat.name} dresses.`
+         }
+       }
+     }
+  } catch {}
+
+  return { title: 'Dress — My Novia' }
 }
 
 async function getDress(slug) {
@@ -26,13 +42,36 @@ async function getDress(slug) {
   }
 }
 
+async function getCategory(slug) {
+  try {
+    const res = await fetch(`${API}/categories?type=dress`, { cache: 'no-store' })
+    if (!res.ok) return null
+    const cats = await res.json()
+    return cats.find(c => c.slug === slug)
+  } catch {
+    return null
+  }
+}
+
 export default async function DressDetailPage({ params }) {
   const dress = await getDress(params.slug)
-
+  
   if (!dress) {
+    const category = await getCategory(params.slug)
+    if (category) {
+      return (
+        <CategoryCollection 
+          categorySlug={category.slug}
+          categoryName={category.name}
+          coverImage={category.image_url || "https://images.unsplash.com/photo-1594463750939-ebb28c3f7f75?w=800&q=80"}
+          description={category.description || `Explore our latest collection of ${category.name} dresses.`}
+        />
+      )
+    }
+
     return (
       <div className="max-w-7xl mx-auto px-6 py-20 text-center">
-        <h1 className="section-heading mb-4">Dress not found</h1>
+        <h1 className="section-heading mb-4">Dress or Category not found</h1>
         <Link href="/dresses" className="btn-gold">View Collection</Link>
       </div>
     )
@@ -114,7 +153,7 @@ export default async function DressDetailPage({ params }) {
           </div>
 
           <Link href="/book-appointment" className="btn-gold-filled w-full text-center block">
-            BOOK AN APPOINTMENT
+             BOOK AN APPOINTMENT
           </Link>
 
           <p className="text-xs text-body-gray font-sans mt-4 text-center">

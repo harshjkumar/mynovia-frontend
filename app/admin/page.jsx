@@ -64,7 +64,7 @@ export default function AdminDashboard() {
           </a>
           <a href="/admin/media" className="p-4 text-center border border-gray-200 hover:border-gold transition-colors rounded">
             <span className="block text-xl mb-1">🖼️</span>
-            <span className="text-xs font-sans text-charcoal">Media Library</span>
+            <span className="text-xs font-sans text-charcoal">Gallery</span>
           </a>
         </div>
       </div>

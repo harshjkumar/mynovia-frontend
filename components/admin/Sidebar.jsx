@@ -9,7 +9,7 @@ const links = [
   { href: '/admin/categorias', label: 'Categories', icon: '📂' },
   { href: '/admin/contenido', label: 'Content', icon: '📝' },
   { href: '/admin/resenas', label: 'Reviews', icon: '⭐' },
-  { href: '/admin/media', label: 'Media', icon: '🖼️' }
+  { href: '/admin/media', label: 'Gallery', icon: '🖼️' }
 ]
 
 export default function Sidebar() {

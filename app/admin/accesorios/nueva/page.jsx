@@ -10,12 +10,12 @@ export default function NewAccessoryPage() {
   const [saving, setSaving] = useState(false)
   const [images, setImages] = useState([])
   const [form, setForm] = useState({
-    name: '', description: '', price: '',
+    name: '', description: '', category_id: '', price: '',
     is_available: true, is_published: false
   })
 
   useEffect(() => {
-    // Categories removed as per request
+    fetchCategories('accessory').then(data => setCategories(data || []))
   }, [])
 
   function update(field, val) {
@@ -28,6 +28,7 @@ export default function NewAccessoryPage() {
     try {
       const acc = await adminCreateAccessory({
         ...form,
+        category_id: form.category_id || null,
         price: form.price ? parseFloat(form.price) : null
       })
 
@@ -47,10 +48,22 @@ export default function NewAccessoryPage() {
       <h1 className="text-2xl font-heading text-charcoal mb-8">New Accessory</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Name *</label>
-          <input type="text" value={form.name} onChange={e => update('name', e.target.value)} required
-            className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Name *</label>
+            <input type="text" value={form.name} onChange={e => update('name', e.target.value)} required
+              className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+          </div>
+          <div>
+            <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Category</label>
+            <select value={form.category_id} onChange={e => update('category_id', e.target.value)}
+              className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold">
+              <option value="">No Category</option>
+              {categories.map(c => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div>

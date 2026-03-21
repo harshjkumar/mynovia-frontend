@@ -264,82 +264,11 @@ export default function ContentEditorPage() {
             </button>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Announcement Bar</h3>
-            <input type="text" placeholder="Announcement text"
-              value={sections.announcement_bar?.text || ''}
-              onChange={e => updateSection('announcement_bar', 'text', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold mb-3" />
-            <input type="text" placeholder="Link text"
-              value={sections.announcement_bar?.link_text || ''}
-              onChange={e => updateSection('announcement_bar', 'link_text', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
-            <button onClick={() => saveSection('announcement_bar')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE</button>
-          </div>
 
           <div className="bg-white p-6 rounded-lg border border-gray-200">
             <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Welcome Section</h3>
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-xs font-sans text-body-gray mb-2">Fallback Left Image (Dresses)</label>
-                  {sections.welcome?.left_image ? (
-                    <div className="relative">
-                      <img src={sections.welcome.left_image} className="w-full h-32 object-cover rounded" />
-                      <label className="absolute top-1 right-1 cursor-pointer bg-white/90 px-2 py-1 text-[10px] font-sans rounded hover:bg-white text-charcoal">
-                        Change
-                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                          const file = e.target.files?.[0]
-                          if (file) {
-                            const result = await adminUploadMedia(file, 'home')
-                            updateSection('welcome', 'left_image', result.url)
-                          }
-                        }} />
-                      </label>
-                    </div>
-                  ) : (
-                    <label className="block border border-dashed border-gray-300 p-4 text-center cursor-pointer text-xs">
-                      Upload Left Image
-                      <input type="file" className="hidden" onChange={async (e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          const result = await adminUploadMedia(file, 'home')
-                          updateSection('welcome', 'left_image', result.url)
-                        }
-                      }} />
-                    </label>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-xs font-sans text-body-gray mb-2">Fallback Right Image (Accessories)</label>
-                  {sections.welcome?.right_image ? (
-                    <div className="relative">
-                      <img src={sections.welcome.right_image} className="w-full h-32 object-cover rounded" />
-                      <label className="absolute top-1 right-1 cursor-pointer bg-white/90 px-2 py-1 text-[10px] font-sans rounded hover:bg-white text-charcoal">
-                        Change
-                        <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                          const file = e.target.files?.[0]
-                          if (file) {
-                            const result = await adminUploadMedia(file, 'home')
-                            updateSection('welcome', 'right_image', result.url)
-                          }
-                        }} />
-                      </label>
-                    </div>
-                  ) : (
-                    <label className="block border border-dashed border-gray-300 p-4 text-center cursor-pointer text-xs">
-                      Upload Right Image
-                      <input type="file" className="hidden" onChange={async (e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          const result = await adminUploadMedia(file, 'home')
-                          updateSection('welcome', 'right_image', result.url)
-                        }
-                      }} />
-                    </label>
-                  )}
-                </div>
-              </div>
+
               <input type="text" placeholder="Eyebrow text"
                 value={sections.welcome?.eyebrow || ''}
                 onChange={e => updateSection('welcome', 'eyebrow', e.target.value)}
@@ -525,78 +454,7 @@ export default function ContentEditorPage() {
             <button onClick={() => saveSection('inspiration')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE INSPIRATION</button>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Featured Dresses Section</h3>
-            <input type="text" placeholder="Section Heading"
-              value={sections.featured_dresses?.heading || ''}
-              onChange={e => updateSection('featured_dresses', 'heading', e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold mb-3" />
-            <button onClick={() => saveSection('featured_dresses')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE DRESSES SECTION</button>
-          </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Featured Accessories Section</h3>
-            <div className="space-y-4">
-              <input type="text" placeholder="Eyebrow text"
-                value={sections.featured_accessories?.eyebrow || ''}
-                onChange={e => updateSection('featured_accessories', 'eyebrow', e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
-              <input type="text" placeholder="Heading"
-                value={sections.featured_accessories?.heading || ''}
-                onChange={e => updateSection('featured_accessories', 'heading', e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
-              <textarea placeholder="Body text" rows={3}
-                value={sections.featured_accessories?.body || ''}
-                onChange={e => updateSection('featured_accessories', 'body', e.target.value)}
-                className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
-              
-              <div>
-                <label className="block text-xs font-sans text-body-gray mb-2">Banner Image</label>
-                {sections.featured_accessories?.banner_image ? (
-                  <div className="relative">
-                    <img src={sections.featured_accessories.banner_image} className="w-full h-32 object-cover rounded" />
-                    <label className="absolute top-1 right-1 cursor-pointer bg-white/90 px-2 py-1 text-[10px] font-sans rounded hover:bg-white text-charcoal">
-                      Change
-                      <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          const result = await adminUploadMedia(file, 'home')
-                          updateSection('featured_accessories', 'banner_image', result.url)
-                        }
-                      }} />
-                    </label>
-                  </div>
-                ) : (
-                  <label className="block border border-dashed border-gray-300 p-4 text-center cursor-pointer text-xs">
-                    Upload Banner Image
-                    <input type="file" className="hidden" onChange={async (e) => {
-                      const file = e.target.files?.[0]
-                      if (file) {
-                        const result = await adminUploadMedia(file, 'home')
-                        updateSection('featured_accessories', 'banner_image', result.url)
-                      }
-                    }} />
-                  </label>
-                )}
-              </div>
-            </div>
-            <button onClick={() => saveSection('featured_accessories')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE ACCESSORIES SECTION</button>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">Reviews Section</h3>
-            <div className="space-y-4">
-              <input type="text" placeholder="Eyebrow text"
-                value={sections.reviews?.eyebrow || ''}
-                onChange={e => updateSection('reviews', 'eyebrow', e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
-              <input type="text" placeholder="Heading"
-                value={sections.reviews?.heading || ''}
-                onChange={e => updateSection('reviews', 'heading', e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
-            </div>
-            <button onClick={() => saveSection('reviews')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE REVIEWS SECTION</button>
-          </div>
         </div>
       )}
 

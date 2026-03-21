@@ -1,203 +1,250 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { fetchAccessories } from '@/lib/api'
-import AccessoryCard from '@/components/catalog/AccessoryCard'
-import Spinner from '@/components/ui/Spinner'
 import Link from 'next/link'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { fetchAccessories, fetchCategories } from '@/lib/api'
 
 export default function AccessoriesPage() {
   const [accessories, setAccessories] = useState([])
-  const [loading, setLoading] = useState(true)
-  const sectionRef = useRef(null)
-
+  const [categories, setCategories] = useState([])
+  
+  const categoryDescriptions = {
+    'combs': 'Exquisite combs to add a touch of sparkle to your bridal hair.',
+    'tiaras': 'Feel like a queen on your special day with our stunning tiaras.',
+    'belt': 'Elegant belts and sashes to perfectly accentuate your waist.',
+    'veils': 'Classic and modern veils to complete your romantic bridal look.',
+    'shoes': 'Comfortable and beautiful shoes for every step down the aisle.',
+    'suspenders': 'Stylish suspenders for a perfect fit and unique look.'
+  }
+  
   useEffect(() => {
-    fetchAccessories()
-      .then(data => setAccessories(data))
-      .catch(() => setAccessories([]))
-      .finally(() => setLoading(false))
+    fetchAccessories().then(data => setAccessories(data || [])).catch(() => setAccessories([]))
+    
+    fetchCategories('accessory').then(data => {
+      if (data && Array.isArray(data)) {
+        const enrichedCategories = data.map(cat => ({
+            ...cat,
+            title: cat.name,
+            description: categoryDescriptions[cat.slug] || cat.description || 'Discover our exclusive pieces.'
+          }))
+        setCategories(enrichedCategories)
+      }
+    }).catch(() => setCategories([]))
   }, [])
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "center center"]
-  })
+  const categoriesData = categories
 
-  const y = useTransform(scrollYProgress, [0, 1], [60, 0])
-  const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1])
-
-  // Animation variants
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 40, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  }
-
-  const headerVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: "easeOut"
-      }
-    }
-  }
-
-  const filterBarVariants = {
-    hidden: { opacity: 0, scaleX: 0.8 },
-    visible: {
-      opacity: 1,
-      scaleX: 1,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut",
-        delay: 0.3
-      }
-    }
-  }
+  const heroRef = useRef(null)
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
+  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
+  const opacityText = useTransform(scrollYProgress, [0, 0.8], [1, 0])
 
   return (
-    <div className="bg-[#FAF9F6] min-h-screen pt-32 pb-24">
-      {/* Header and Breadcrumbs */}
-      <motion.div
-        ref={sectionRef}
-        style={{ opacity }}
-        className="max-w-[1600px] mx-auto px-6 md:px-12 text-center mb-12"
-      >
-        <motion.div
-          variants={headerVariants}
-          initial="hidden"
-          animate="visible"
-          className="flex items-center justify-center text-[11px] font-sans tracking-[1px] text-[#7A7A7A] mb-4"
-        >
-          <Link href="/" className="hover:text-charcoal transition-colors underline decoration-transparent hover:decoration-currentColor underline-offset-4">Home</Link>
-          <motion.span
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mx-2"
-          >/</motion.span>
-          <motion.span
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-[#a09e9e]"
-          >Accessories</motion.span>
+    <div className="bg-[#FAF9F6] min-h-screen overflow-hidden">
+      {/* Cinematic Hero Section */}
+      <section ref={heroRef} className="relative w-full h-screen min-h-[700px] overflow-hidden bg-charcoal">
+        <motion.div style={{ y: yBg }} className="absolute inset-0 z-0">
+          <motion.img
+            initial={{ scale: 1.1, opacity: 0 }}
+            animate={{ scale: 1, opacity: 0.8 }}
+            transition={{ duration: 2, ease: "easeOut" }}
+            src="/images/accessories_hero.png"
+            alt="Wedding Accessories Collection"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/65" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F6] via-transparent to-black/40" />
+          <div className="absolute inset-0 bg-radial-gradient" style={{
+            background: 'radial-gradient(circle at center, rgba(0,0,0,0.4), rgba(0,0,0,0.8))'
+          }} />
         </motion.div>
-        <motion.h1
-          style={{ y }}
-          variants={headerVariants}
-          initial="hidden"
-          animate="visible"
-          className="font-heading text-4xl md:text-5xl lg:text-[56px] text-[#333333] font-light tracking-wide"
+
+        <motion.div 
+          style={{ opacity: opacityText }}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+          className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6 w-full max-w-5xl mx-auto"
         >
-          Exclusive Accessories
-        </motion.h1>
-        <motion.p
-          variants={headerVariants}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.2 }}
-          className="font-body text-[#7a7a7a] text-sm leading-relaxed mt-4 max-w-2xl mx-auto"
-        >
-          Complete your bridal look with our carefully curated collection of luxury accessories
-        </motion.p>
-      </motion.div>
-
-      {/* Filter and Sort Bar */}
-      <motion.div
-        variants={filterBarVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        className="max-w-[1600px] mx-auto px-6 md:px-12 mb-12"
-      >
-        <div className="flex items-center justify-between border-t border-b border-[#E5E5E5] py-4 text-xs font-sans tracking-wide text-[#555555]">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center hover:text-charcoal transition-colors uppercase"
-          >
-            <span>Filter</span>
-            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-          </motion.button>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="hidden md:block text-[#999999]"
-          >
-            {accessories.length} products
-          </motion.div>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex items-center hover:text-charcoal transition-colors"
-          >
-            <span>Sort by: <span className="text-charcoal">Best selling</span></span>
-            <svg className="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </motion.button>
-        </div>
-      </motion.div>
-
-      {/* Collection Grid */}
-      <section className="max-w-[1600px] mx-auto px-6 md:px-12">
-        {loading ? (
-          <div className="flex justify-center items-center h-64"><Spinner /></div>
-        ) : accessories.length > 0 ? (
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            {accessories.map((accessory, index) => (
-              <motion.div
-                key={accessory.id}
-                variants={cardVariants}
-                className="group"
-              >
-                <AccessoryCard accessory={accessory} />
-              </motion.div>
-            ))}
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center py-24 bg-white shadow-sm border border-[#E5E5E5]"
-          >
-            <h3 className="font-heading text-2xl text-charcoal mb-4">No accessories found</h3>
-            <p className="font-body text-[#7A7A7A]">We're currently updating our accessories collection. Please check back later.</p>
-          </motion.div>
-        )}
+          <span className="text-[12px] font-sans tracking-[6px] uppercase block mb-6 text-white font-semibold" style={{ textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6)' }}>EXCLUSIVE PIECES</span>
+          <h1 className="font-heading text-6xl md:text-8xl lg:text-9xl font-light mb-8 tracking-wide" style={{ textShadow: '0 6px 20px rgba(0,0,0,0.9), 0 3px 10px rgba(0,0,0,0.8)' }}>
+            Our <em>Accessories</em>
+          </h1>
+          <Link href="#collections" className="group mt-8 inline-flex flex-col items-center gap-4 text-[11px] font-sans tracking-[3px] uppercase hover:text-gold transition-colors font-semibold" style={{ textShadow: '0 3px 10px rgba(0,0,0,0.8)' }}>
+            <span>Discover</span>
+            <span className="w-[1px] h-12 bg-white group-hover:bg-gold transition-colors origin-top block animate-pulse"></span>
+          </Link>
+        </motion.div>
       </section>
+
+      {/* Category Sections */}
+      <div id="collections" className="py-24 bg-[#FAF9F6] relative z-20">
+        {categoriesData.map((cat, index) => {
+          const catAccs = accessories.filter(a => a.categories?.slug === cat.slug || false)
+          const isEven = index % 2 === 0
+          
+          return (
+            <section key={cat.slug} className={`py-20 md:py-32 px-6 md:px-12 max-w-[1800px] mx-auto border-b border-[#E5E5E5] last:border-0 ${!isEven ? 'bg-white' : ''}`}>
+              <div className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-stretch gap-12 lg:gap-24`}>
+                
+                <motion.div 
+                  initial={{ opacity: 0, x: isEven ? -50 : 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-10%" }}
+                  transition={{ duration: 1, ease: "easeOut" }}
+                  className="w-full lg:w-5/12 flex-shrink-0"
+                >
+                  <div className="sticky top-32">
+                    <Link href={`/accessories/${cat.slug}`} className="group block">
+                      <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe8e3] group-hover:shadow-xl transition-shadow duration-700">
+                        <img 
+                          src={cat.image_url || cat.image || 'https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=800&q=80'} 
+                          alt={cat.title} 
+                          className="w-full h-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-700" />
+                        <div className="absolute inset-0 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-black/30">
+                          <span className="border border-white px-8 py-3 text-[11px] font-sans tracking-[3px] uppercase">
+                            View Category
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                    <motion.div 
+                       initial={{ opacity: 0, y: 20 }}
+                       whileInView={{ opacity: 1, y: 0 }}
+                       viewport={{ once: true }}
+                       transition={{ duration: 0.8, delay: 0.3 }}
+                       className="mt-8 text-center lg:text-left"
+                    >
+                      <h2 className="font-heading text-4xl lg:text-5xl text-[#333] mb-4 font-light">{cat.title}</h2>
+                      <p className="font-body text-[#7a7a7a] text-sm leading-relaxed max-w-md mx-auto lg:mx-0 pr-6">
+                        {cat.description}
+                      </p>
+                    </motion.div>
+                  </div>
+                </motion.div>
+
+                <motion.div 
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-10%" }}
+                  transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+                  className="w-full lg:w-7/12 overflow-hidden flex flex-col justify-center"
+                >
+                  {catAccs.length > 0 ? (
+                    <motion.div 
+                      variants={{
+                        hidden: {},
+                        show: { transition: { staggerChildren: 0.15 } }
+                      }}
+                      initial="hidden"
+                      whileInView="show"
+                      viewport={{ once: true, margin: "-10%" }}
+                      className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                    >
+                      {catAccs.slice(0, 6).map((acc, i) => {
+                        const imgUrl = acc.accessory_images?.sort((a,b)=>a.display_order-b.display_order)?.[0]?.image_url || 'https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=400&q=80';
+                        return (
+                          <motion.div 
+                            variants={{ hidden: { opacity: 0, x: 50 }, show: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
+                            key={acc.id} 
+                            className="w-[85%] md:w-[320px] lg:w-[350px] flex-shrink-0 snap-center group block"
+                          >
+                            <Link href={`/accessories/${acc.slug}`}>
+                              <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe8e3] mb-5 group-hover:shadow-md transition-shadow">
+                                <img src={imgUrl} alt={acc.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                              </div>
+                              <h3 className="font-heading text-xl text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-1 truncate">{acc.name}</h3>
+                              <p className="font-sans text-[12px] text-[#b3b3b3] uppercase tracking-wider">{cat.title} Accessory</p>
+                            </Link>
+                          </motion.div>
+                      )})}
+                      {catAccs.length > 6 && (
+                        <div className="w-[85%] md:w-[320px] lg:w-[350px] flex-shrink-0 snap-center flex items-center justify-center bg-transparent border border-[#E5E5E5] group">
+                          <Link href={`/accessories/${cat.slug}`} className="flex flex-col items-center gap-3 text-[#333] group-hover:text-[#f05f42] transition-colors p-12">
+                            <span className="font-heading text-xl font-light">See all {catAccs.length}</span>
+                            <span className="text-[10px] font-sans tracking-[2px] uppercase border-b border-currentColor pb-1">View Category</span>
+                          </Link>
+                        </div>
+                      )}
+                    </motion.div>
+                  ) : (
+                    <div className="h-full min-h-[400px] flex items-center justify-center border border-[#E5E5E5] bg-white">
+                      <div className="text-center p-8">
+                        <p className="font-heading text-2xl text-[#333] mb-2">Coming Soon</p>
+                        <p className="font-body text-[#7a7a7a] text-sm">We are currently updating our {cat.title} collection.</p>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+                
+              </div>
+            </section>
+          )
+        })}
+
+        {/* All Accessories Section */}
+        <section className="py-24 px-6 md:px-12 max-w-[1800px] mx-auto bg-[#FAF9F6] relative z-20">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="mb-16"
+          >
+            <h2 className="font-heading text-5xl lg:text-6xl text-[#333] mb-4 font-light text-center">All Our Accessories</h2>
+            <p className="font-body text-[#7a7a7a] text-sm leading-relaxed text-center max-w-2xl mx-auto">
+              Explore our complete collection of bridal veils, tiaras, delicate combs, and more.
+            </p>
+          </motion.div>
+
+          {accessories.length > 0 ? (
+            <motion.div 
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.1 } }
+              }}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, margin: "-10%" }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            >
+              {accessories.map((acc) => {
+                const imgUrl = acc.accessory_images?.sort((a,b)=>a.display_order-b.display_order)?.[0]?.image_url || 'https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=400&q=80';
+                const categoryName = acc.categories?.name || 'Accessory';
+                return (
+                  <motion.div
+                    variants={{ hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } }}
+                    key={acc.id}
+                    className="group"
+                  >
+                    <Link href={`/accessories/${acc.slug}`}>
+                      <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe8e3] mb-5 group-hover:shadow-lg transition-shadow duration-500">
+                        <img 
+                          src={imgUrl} 
+                          alt={acc.name} 
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
+                      </div>
+                      <h3 className="font-heading text-lg text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-2 line-clamp-2">{acc.name}</h3>
+                      <p className="font-sans text-[11px] text-[#b3b3b3] uppercase tracking-wider">{categoryName}</p>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          ) : (
+            <div className="h-64 flex items-center justify-center border border-[#E5E5E5] bg-white rounded-lg">
+              <div className="text-center">
+                <p className="font-heading text-2xl text-[#333] mb-2">No Accessories Found</p>
+                <p className="font-body text-[#7a7a7a] text-sm">Check back soon for our newest collection</p>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   )
 }
