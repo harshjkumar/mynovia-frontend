@@ -6,13 +6,21 @@ import { adminGetAccessories, adminDeleteAccessory } from '@/lib/api'
 export default function AdminAccessoriesPage() {
   const [accessories, setAccessories] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  useEffect(() => {
-    adminGetAccessories()
-      .then(data => setAccessories(data))
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [])
+  useEffect(() => { loadAccessories() }, [])
+
+  async function loadAccessories() {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await adminGetAccessories()
+      setAccessories(data)
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to load accessories')
+    }
+    setLoading(false)
+  }
 
   async function handleDelete(id, name) {
     if (!confirm(`Delete "${name}"?`)) return
@@ -41,6 +49,10 @@ export default function AdminAccessoriesPage() {
           <tbody className="divide-y divide-gray-100">
             {loading ? (
               <tr><td colSpan={3} className="px-6 py-8 text-center text-body-gray">Loading...</td></tr>
+            ) : error ? (
+              <tr><td colSpan={3} className="px-6 py-8 text-center text-red-500">
+                {error} — <button onClick={loadAccessories} className="underline text-gold">Retry</button>
+              </td></tr>
             ) : accessories.length === 0 ? (
               <tr><td colSpan={3} className="px-6 py-8 text-center text-body-gray">No accessories</td></tr>
             ) : accessories.map(acc => (

@@ -90,7 +90,7 @@ export default function WelcomeSection({ data, dresses = [], accessories = [] })
              transition={{ duration: 0.8, delay: 0.3 }}
              className="w-full md:w-[40%] lg:w-[30%] bg-white p-10 md:p-8 lg:p-12 shadow-md rounded-sm border border-pink-100 flex flex-col items-center justify-center text-center aspect-square md:aspect-auto md:h-full min-h-[400px] z-10"
           >
-            <span className="text-3xl mb-6">💍</span>
+            <span className="text-3xl mb-6">{content.cta_icon || '💍'}</span>
             <h3 className="font-heading text-2xl lg:text-3xl text-charcoal mb-4">
               {content.cta_heading || 'Find Your Dream Dress'}
             </h3>
@@ -98,7 +98,7 @@ export default function WelcomeSection({ data, dresses = [], accessories = [] })
               {content.cta_text || 'Book a private fitting session with our bridal experts. We ensure a personalized experience to find the dress that tells your unique story.'}
             </p>
             <Link 
-              href={content.cta_btn_link || '/agenda-tu-cita'} 
+              href="/agenda-tu-cita" 
               className="px-8 py-4 bg-charcoal text-white text-[10px] font-sans font-semibold tracking-[2px] uppercase hover:bg-gold transition-colors w-full sm:w-auto"
             >
               {content.cta_btn_text || 'Book an Appointment'}

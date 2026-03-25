@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Sidebar from '@/components/admin/Sidebar'
+import { getMe } from '@/lib/api'
 
 export default function AdminLayout({ children }) {
   const router = useRouter()
@@ -21,13 +22,19 @@ export default function AdminLayout({ children }) {
       return
     }
 
-    try {
-      const u = JSON.parse(localStorage.getItem('mynovia_user') || '{}')
-      setUser(u)
-      setAuthed(true)
-    } catch {
-      router.push('/admin/login')
-    }
+    // Validate token with backend
+    getMe()
+      .then(userData => {
+        setUser(userData)
+        localStorage.setItem('mynovia_user', JSON.stringify(userData))
+        setAuthed(true)
+      })
+      .catch(() => {
+        // Token is invalid or expired — clear and redirect
+        localStorage.removeItem('mynovia_token')
+        localStorage.removeItem('mynovia_user')
+        router.push('/admin/login')
+      })
   }, [pathname, router])
 
   if (!authed) return null

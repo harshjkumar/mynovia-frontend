@@ -47,7 +47,7 @@ export default function FeaturedAccessories({ data, accessories = [] }) {
             {content.heading || 'Refined & Memorable'}
           </h2>
           <p className="font-body text-body-gray mb-12 text-sm leading-relaxed max-w-sm">
-            {content.body || 'For the bride who wishes to shine with her own light. With sculpted details, intricate lace, and dazzling pieces designed to complement your look from the first to the last dance.'}
+            {content.subtext || 'For the bride who wishes to shine with her own light. With sculpted details, intricate lace, and dazzling pieces designed to complement your look from the first to the last dance.'}
           </p>
           
           <div className="flex items-center gap-6 mb-12">

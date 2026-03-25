@@ -6,15 +6,20 @@ import { adminGetDresses, adminDeleteDress } from '@/lib/api'
 export default function AdminDressesPage() {
   const [dresses, setDresses] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [search, setSearch] = useState('')
 
   useEffect(() => { loadDresses() }, [])
 
   async function loadDresses() {
+    setLoading(true)
+    setError(null)
     try {
       const data = await adminGetDresses()
       setDresses(data)
-    } catch (err) {}
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to load dresses')
+    }
     setLoading(false)
   }
 
@@ -61,6 +66,10 @@ export default function AdminDressesPage() {
           <tbody className="divide-y divide-gray-100">
             {loading ? (
               <tr><td colSpan={5} className="px-6 py-8 text-center text-body-gray">Loading...</td></tr>
+            ) : error ? (
+              <tr><td colSpan={5} className="px-6 py-8 text-center text-red-500">
+                {error} — <button onClick={loadDresses} className="underline text-gold">Retry</button>
+              </td></tr>
             ) : filtered.length === 0 ? (
               <tr><td colSpan={5} className="px-6 py-8 text-center text-body-gray">No dresses found</td></tr>
             ) : filtered.map(dress => (

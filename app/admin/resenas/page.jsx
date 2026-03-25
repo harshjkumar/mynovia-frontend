@@ -63,8 +63,8 @@ export default function AdminReviewsPage() {
                 <td className="px-6 py-3 text-gold">{'★'.repeat(r.rating||0)}</td>
                 <td className="px-6 py-3 text-body-gray text-xs max-w-xs truncate hidden md:table-cell">{r.review_text}</td>
                 <td className="px-6 py-3">
-                  {!r.approved && <button onClick={() => handleApprove(r.id)} className="text-xs text-green-600 hover:underline mr-2">Approve</button>}
-                  {r.approved && <button onClick={() => handleReject(r.id)} className="text-xs text-red-500 hover:underline">Reject</button>}
+                  {!r.is_approved && <button onClick={() => handleApprove(r.id)} className="text-xs text-green-600 hover:underline mr-2">Approve</button>}
+                  {r.is_approved && <button onClick={() => handleReject(r.id)} className="text-xs text-red-500 hover:underline">Reject</button>}
                 </td>
               </tr>
             ))}

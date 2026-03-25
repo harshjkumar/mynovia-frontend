@@ -16,17 +16,6 @@ export default function Footer() {
         
         <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
            <h3 className="font-heading text-4xl lg:text-5xl tracking-[4px] uppercase text-charcoal">MY NOVIA</h3>
-           
-           <div className="flex flex-col items-center md:items-end w-full md:w-auto">
-             <span className="text-[10px] font-sans tracking-[3px] uppercase text-charcoal mb-4">SUBSCRIBE TO OUR EMAILS</span>
-             <p className="text-body-gray text-xs mb-4 max-w-sm text-center md:text-right">Join our mailing list to stay informed about latest trends in bridal. Plus, be the first to know when we post new contests and giveaways!</p>
-             <div className="flex w-full max-w-md">
-                <input type="email" placeholder="Email address" className="flex-1 bg-white border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:border-charcoal" />
-                <button className="bg-charcoal text-white px-6 py-3 text-[10px] font-sans tracking-[2px] font-semibold uppercase hover:bg-gold transition-colors">
-                  SIGN UP
-                </button>
-             </div>
-           </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 border-t border-gray-200 pt-16">

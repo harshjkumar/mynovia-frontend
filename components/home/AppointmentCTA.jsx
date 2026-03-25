@@ -48,7 +48,7 @@ export default function AppointmentCTA({ data }) {
           {content.subtext || 'Live an exclusive experience with personalized attention. We help you find the perfect dress for your big day in an intimate and luxurious setting.'}
         </motion.p>
         <motion.div variants={textVariants}>
-          <Link href={content.cta_link || '/agenda-tu-cita'} className="inline-block bg-white text-charcoal px-8 py-4 text-[11px] font-sans font-semibold tracking-[3px] uppercase hover:bg-gold hover:text-white transition-all duration-300">
+          <Link href="/agenda-tu-cita" className="inline-block bg-white text-charcoal px-8 py-4 text-[11px] font-sans font-semibold tracking-[3px] uppercase hover:bg-gold hover:text-white transition-all duration-300">
             {content.cta_text || 'BOOK AN APPOINTMENT'}
           </Link>
         </motion.div>

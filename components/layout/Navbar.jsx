@@ -12,14 +12,12 @@ export default function Navbar() {
   const pathname = usePathname()
 
   const [dressCategories, setDressCategories] = useState([
-    { label: 'All Dresses', href: '/dresses' },
     { label: 'Bride', href: '/dresses/bride' },
     { label: 'Party', href: '/dresses/party' },
     { label: 'Godmother', href: '/dresses/godmother' },
     { label: 'Cocktail', href: '/dresses/cocktail' }
   ])
   const [accCategories, setAccCategories] = useState([
-    { label: 'All Accessories', href: '/accessories' },
     { label: 'Combs', href: '/accessories/combs' },
     { label: 'Tiaras', href: '/accessories/tiaras' },
     { label: 'Belt', href: '/accessories/belt' },
@@ -51,24 +49,26 @@ export default function Navbar() {
         ])
         
         if (dCats && dCats.length > 0) {
-          setDressCategories([
-            { label: 'All Dresses', href: '/dresses' },
-            ...dCats.map(c => ({ label: c.name, href: `/dresses/${c.slug}` }))
-          ])
+          setDressCategories(
+            dCats.map(c => ({ label: c.name, href: `/dresses/${c.slug}` }))
+          )
         }
         
         if (aCats && aCats.length > 0) {
-          setAccCategories([
-            { label: 'All Accessories', href: '/accessories' },
-            ...aCats.map(c => ({ label: c.name, href: `/accessories/${c.slug}` }))
-          ])
+          setAccCategories(
+            aCats.map(c => ({ label: c.name, href: `/accessories/${c.slug}` }))
+          )
         }
       } catch (err) {}
     }
     loadCats()
   }, [])
 
-  const isTransparent = (isHome || isDresses || isAccessories) && !scrolled && !mobileOpen
+  // Only apply transparent navbar on pages with dark hero sections
+  const isDressesMain = pathname === '/dresses'
+  const isAccessoriesMain = pathname === '/accessories'
+  const hasHero = isHome || isDressesMain || isAccessoriesMain
+  const isTransparent = hasHero && !scrolled && !mobileOpen
   const navBg = isTransparent ? 'bg-transparent' : 'bg-[#FAF9F6] shadow-sm'
   const textColor = isTransparent ? 'text-white' : 'text-charcoal'
   const hoverColor = isTransparent ? 'hover:text-white/70' : 'hover:text-gold'
@@ -104,7 +104,7 @@ export default function Navbar() {
                       key={cat.href}
                       href={cat.href}
                       onClick={() => setDressDropdownOpen(false)}
-                      className={`px-6 py-3 text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:bg-[#f5f5f5] hover:text-gold transition-colors ${idx === 0 ? 'border-b border-[#e5e5e5]' : ''}`}
+                      className="px-6 py-3 text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:bg-[#f5f5f5] hover:text-gold transition-colors"
                     >
                       {cat.label}
                     </Link>
@@ -131,7 +131,7 @@ export default function Navbar() {
                       key={cat.href}
                       href={cat.href}
                       onClick={() => setAccDropdownOpen(false)}
-                      className={`px-6 py-3 text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:bg-[#f5f5f5] hover:text-gold transition-colors ${idx === 0 ? 'border-b border-[#e5e5e5]' : ''}`}
+                      className="px-6 py-3 text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:bg-[#f5f5f5] hover:text-gold transition-colors"
                     >
                       {cat.label}
                     </Link>
@@ -172,7 +172,7 @@ export default function Navbar() {
         </nav>
       </header>
       
-      {!(isHome || isDresses || isAccessories) && <div className="h-[80px] bg-[#FAF9F6]" />}
+      {!hasHero && <div className="h-[80px] bg-[#FAF9F6]" />}
 
       {mobileOpen && (
         <div className="fixed inset-0 z-40 bg-[#FAF9F6] flex flex-col pt-32 px-8 lg:hidden animate-fade-in text-charcoal overflow-y-auto">

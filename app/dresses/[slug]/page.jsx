@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import CategoryCollection from '@/components/catalog/CategoryCollection'
+import DressImageGallery from '@/components/catalog/DressImageGallery'
+import DressVariantSelector from '@/components/catalog/DressVariantSelector'
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'
 
@@ -79,6 +81,7 @@ export default async function DressDetailPage({ params }) {
 
   const images = (dress.dress_images || []).sort((a, b) => a.display_order - b.display_order)
   const tags = (dress.dress_tags || []).map(dt => dt.tags).filter(Boolean)
+  const variants = dress.dress_variants || []
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
@@ -90,31 +93,9 @@ export default async function DressDetailPage({ params }) {
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div>
-          {images.length > 0 ? (
-            <div className="space-y-4">
-              <div className="aspect-[3/4] overflow-hidden bg-cream">
-                <img
-                  src={images[0].image_url}
-                  alt={dress.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {images.length > 1 && (
-                <div className="grid grid-cols-4 gap-3">
-                  {images.slice(1).map(img => (
-                    <div key={img.id} className="aspect-[3/4] overflow-hidden bg-cream cursor-pointer hover:opacity-80 transition-opacity">
-                      <img src={img.image_url} alt={dress.name} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="aspect-[3/4] bg-cream flex items-center justify-center">
-              <p className="text-body-gray font-sans text-sm">No image</p>
-            </div>
-          )}
+        {/* Left Column - Image Gallery */}
+        <div className="lg:sticky lg:top-32 lg:h-[calc(100vh-160px)] overflow-y-auto pr-2 lg:pr-4">
+          <DressImageGallery images={images} dressName={dress.name} />
         </div>
 
         <div className="lg:py-8">
@@ -137,20 +118,7 @@ export default async function DressDetailPage({ params }) {
             </div>
           )}
 
-          <div className="space-y-4 mb-10 p-6 bg-cream/50 border border-bar-tan/30">
-            <div className="flex justify-between items-center py-2 border-b border-bar-tan/20">
-              <span className="text-sm font-sans text-body-gray">Availability</span>
-              <span className={`text-sm font-sans font-medium ${dress.is_available ? 'text-green-700' : 'text-gold'}`}>
-                {dress.is_available && dress.inventory_count > 0 ? 'In stock' : 'On request'}
-              </span>
-            </div>
-            {dress.delivery_time_days && (
-              <div className="flex justify-between items-center py-2 border-b border-bar-tan/20">
-                <span className="text-sm font-sans text-body-gray">Delivery time</span>
-                <span className="text-sm font-sans text-charcoal">{dress.delivery_time_days} days</span>
-              </div>
-            )}
-          </div>
+          <DressVariantSelector dress={dress} variants={variants} />
 
           <Link href="/book-appointment" className="btn-gold-filled w-full text-center block">
              BOOK AN APPOINTMENT

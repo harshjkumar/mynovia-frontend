@@ -18,9 +18,9 @@ export default function CategoryCollection({ categorySlug, categoryName }) {
   }, [categorySlug])
 
   return (
-    <div className="bg-[#FAF9F6] min-h-screen pt-32 pb-24">
+    <div className="bg-[#FAF9F6] min-h-screen pt-24 pb-16">
       {/* Header and Breadcrumbs */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 text-center mb-12">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 text-center mb-8">
         <div className="flex items-center justify-center text-[11px] font-sans tracking-[1px] text-[#7A7A7A] mb-4">
           <Link href="/" className="hover:text-charcoal transition-colors underline decoration-transparent hover:decoration-currentColor underline-offset-4">Home</Link>
           <span className="mx-2">/</span>

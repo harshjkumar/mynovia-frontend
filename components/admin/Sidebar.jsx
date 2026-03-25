@@ -7,8 +7,10 @@ const links = [
   { href: '/admin/vestidos', label: 'Dresses', icon: '👗' },
   { href: '/admin/accesorios', label: 'Accessories', icon: '💍' },
   { href: '/admin/categorias', label: 'Categories', icon: '📂' },
+  { href: '/admin/atributos', label: 'Attributes', icon: '🎨' },
   { href: '/admin/contenido', label: 'Content', icon: '📝' },
   { href: '/admin/resenas', label: 'Reviews', icon: '⭐' },
+  { href: '/admin/mensajes', label: 'Contact Messages', icon: '📬' },
   { href: '/admin/media', label: 'Gallery', icon: '🖼️' }
 ]
 

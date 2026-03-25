@@ -94,8 +94,10 @@ export default function HeroBanner({ data }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <Link href={slides[current]?.cta_link || '/dresses'} className="bg-white/95 text-charcoal px-8 py-4 text-[11px] font-sans font-semibold tracking-[3px] uppercase hover:bg-gold hover:text-white transition-all duration-300 shadow-xl inline-block">
-                {slides[current]?.cta_text || 'VIEW COLLECTIONS'}
+              <Link 
+                href="/dresses" 
+                className="bg-white/95 text-charcoal px-8 py-4 text-[11px] font-sans font-semibold tracking-[3px] uppercase hover:bg-gold hover:text-white transition-all duration-300 shadow-xl inline-block"
+              >  {slides[current]?.cta_text || 'VIEW COLLECTIONS'}
               </Link>
             </motion.div>
           </motion.div>
