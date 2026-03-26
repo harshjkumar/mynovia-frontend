@@ -153,8 +153,8 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              <div className="ml-4">
-                <Link href="/book-appointment" className={`px-6 py-2.5 text-[10px] font-sans font-semibold tracking-[2px] uppercase transition-all duration-300 ${isTransparent ? 'bg-white text-charcoal hover:bg-transparent hover:text-white border border-white' : 'bg-charcoal text-white hover:bg-gold'}`}>
+              <div className="ml-4 flex-shrink-0">
+                <Link href="/book-appointment" className={`whitespace-nowrap px-6 py-2.5 text-[10px] font-sans font-semibold tracking-[2px] uppercase transition-all duration-300 ${isTransparent ? 'bg-white text-charcoal hover:bg-transparent hover:text-white border border-white' : 'bg-charcoal text-white hover:bg-gold'}`}>
                   BOOK AN APPOINTMENT
                 </Link>
               </div>
@@ -242,7 +242,7 @@ export default function Navbar() {
             ))}
           </div>
           <div className="mt-12 flex flex-col gap-4 pb-12">
-            <Link href="/book-appointment" onClick={() => setMobileOpen(false)} className="bg-charcoal text-white text-[11px] font-sans font-semibold tracking-[2px] uppercase py-4 text-center hover:bg-gold transition-colors">
+            <Link href="/book-appointment" onClick={() => setMobileOpen(false)} className="whitespace-nowrap block bg-charcoal text-white text-[11px] font-sans font-semibold tracking-[2px] uppercase py-4 text-center hover:bg-gold transition-colors">
               BOOK AN APPOINTMENT
             </Link>
           </div>

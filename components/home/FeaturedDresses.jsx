@@ -91,8 +91,8 @@ export default function FeaturedDresses({ data, dresses = [] }) {
                       <div className="absolute inset-0 bg-black/10 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500" />
                     )}
                     {!dress.isDummy && (
-                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover/card:opacity-100 transition-all duration-500 translate-y-4 group-hover/card:translate-y-0">
-                        <span className="bg-white/95 px-6 py-3 text-[10px] font-sans font-medium tracking-[2px] uppercase text-charcoal shadow-sm">
+                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[85%] max-w-[180px] opacity-0 group-hover/card:opacity-100 transition-all duration-500 translate-y-4 group-hover/card:translate-y-0">
+                        <span className="whitespace-nowrap block w-full bg-white/95 px-4 py-3 text-[10px] font-sans font-medium tracking-[2px] uppercase text-center text-charcoal shadow-sm">
                           VIEW DETAILS
                         </span>
                       </div>
