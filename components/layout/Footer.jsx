@@ -14,9 +14,7 @@ export default function Footer() {
     <footer className="bg-[#FAF9F6] border-t border-gray-200 text-charcoal">
       <div className="max-w-[1536px] mx-auto px-6 py-20 pb-10">
         
-        <div className="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
-           <h3 className="font-heading text-4xl lg:text-5xl tracking-[4px] uppercase text-charcoal">MY NOVIA</h3>
-        </div>
+
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 border-t border-gray-200 pt-16">
           <div>

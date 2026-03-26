@@ -30,6 +30,8 @@ export default function AdminLoginPage() {
 
       localStorage.setItem('mynovia_token', data.token)
       localStorage.setItem('mynovia_user', JSON.stringify(data.user))
+      // 1 hour expiry
+      localStorage.setItem('mynovia_token_expires', Date.now() + 3600000)
       router.push('/admin')
     } catch (err) {
       setError('Connection error')

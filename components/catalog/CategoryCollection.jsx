@@ -18,7 +18,7 @@ export default function CategoryCollection({ categorySlug, categoryName }) {
   }, [categorySlug])
 
   return (
-    <div className="bg-[#FAF9F6] min-h-screen pt-24 pb-16">
+    <div className="bg-[#FAF9F6] min-h-screen pt-12 pb-16">
       {/* Header and Breadcrumbs */}
       <div className="max-w-[1600px] mx-auto px-6 md:px-12 text-center mb-8">
         <div className="flex items-center justify-center text-[11px] font-sans tracking-[1px] text-[#7A7A7A] mb-4">
@@ -29,29 +29,6 @@ export default function CategoryCollection({ categorySlug, categoryName }) {
         <h1 className="font-heading text-4xl md:text-5xl lg:text-[56px] text-[#333333] font-light tracking-wide">
           {categoryName} Dresses
         </h1>
-      </div>
-
-      {/* Filter and Sort Bar */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 mb-12">
-        <div className="flex items-center justify-between border-t border-b border-[#E5E5E5] py-4 text-xs font-sans tracking-wide text-[#555555]">
-          <button className="flex items-center hover:text-charcoal transition-colors uppercase">
-            <span>Filter</span>
-            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-          </button>
-          
-          <div className="hidden md:block text-[#999999]">
-            {dresses.length} products
-          </div>
-
-          <button className="flex items-center hover:text-charcoal transition-colors">
-            <span>Sort by: <span className="text-charcoal">Best selling</span></span>
-            <svg className="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
       </div>
 
       {/* Collection Grid */}

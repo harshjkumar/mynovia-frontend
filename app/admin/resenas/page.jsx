@@ -7,6 +7,7 @@ export default function AdminReviewsPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [syncing, setSyncing] = useState(false)
+  const [selectedReview, setSelectedReview] = useState(null)
 
   useEffect(() => { load() }, [filter])
 
@@ -19,8 +20,14 @@ export default function AdminReviewsPage() {
     setLoading(false)
   }
 
-  async function handleApprove(id) { await adminUpdateReview(id, true); load() }
-  async function handleReject(id) { await adminUpdateReview(id, false); load() }
+  async function toggleApproval(r) {
+    if (r.is_approved) {
+      await adminUpdateReview(r.id, false);
+    } else {
+      await adminUpdateReview(r.id, true);
+    }
+    load()
+  }
 
   async function handleSync() {
     setSyncing(true)
@@ -63,14 +70,41 @@ export default function AdminReviewsPage() {
                 <td className="px-6 py-3 text-gold">{'★'.repeat(r.rating||0)}</td>
                 <td className="px-6 py-3 text-body-gray text-xs max-w-xs truncate hidden md:table-cell">{r.review_text}</td>
                 <td className="px-6 py-3">
-                  {!r.is_approved && <button onClick={() => handleApprove(r.id)} className="text-xs text-green-600 hover:underline mr-2">Approve</button>}
-                  {r.is_approved && <button onClick={() => handleReject(r.id)} className="text-xs text-red-500 hover:underline">Reject</button>}
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => setSelectedReview(r)} className="text-xs font-sans text-body-gray hover:text-gold uppercase tracking-wider">
+                      View
+                    </button>
+                    <button onClick={() => toggleApproval(r)} className={`w-10 h-5 rounded-full relative transition-colors ${r.is_approved ? 'bg-gold' : 'bg-gray-300'}`}>
+                      <div className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-all ${r.is_approved ? 'left-6' : 'left-1'}`}></div>
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {selectedReview && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-6 rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-heading text-charcoal mb-4">Review Details</h2>
+            <div className="mb-4">
+              <p className="text-xs font-sans text-body-gray uppercase">Author</p>
+              <p className="font-medium text-charcoal">{selectedReview.author_name}</p>
+            </div>
+            <div className="mb-4">
+              <p className="text-xs font-sans text-body-gray uppercase">Rating</p>
+              <p className="text-gold">{'★'.repeat(selectedReview.rating || 0)}</p>
+            </div>
+            <div className="mb-6">
+              <p className="text-xs font-sans text-body-gray uppercase">Text</p>
+              <p className="text-body-gray text-sm mt-1 whitespace-pre-wrap">{selectedReview.review_text}</p>
+            </div>
+            <button onClick={() => setSelectedReview(null)} className="btn-gold-filled w-full text-center py-3 text-xs">CLOSE</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

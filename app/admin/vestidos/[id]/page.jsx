@@ -166,6 +166,7 @@ export default function EditDressPage() {
     try {
       await adminUpdateDress(id, {
         ...form,
+        inventory_count: variants.length > 0 ? variants.reduce((sum, v) => sum + (parseInt(v.stock) || 0), 0) : form.inventory_count,
         price: form.price ? parseFloat(form.price) : null,
         delivery_time_days: form.delivery_time_days ? parseInt(form.delivery_time_days) : null
       })
@@ -226,18 +227,18 @@ export default function EditDressPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Base Price</label>
-                <input type="number" step="0.01" value={form.price} onChange={e => update('price', e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+                <input type="number" step="0.01" min="0" onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} value={form.price} onChange={e => update('price', e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold [&::-webkit-inner-spin-button]:appearance-none" />
               </div>
               <div>
                 <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Total Stock (Fallback)</label>
-                <input type="number" value={form.inventory_count} onChange={e => update('inventory_count', parseInt(e.target.value) || 0)}
-                  className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+                <input type="number" min="0" onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} readOnly={variants.length > 0} value={variants.length > 0 ? variants.reduce((sum, v) => sum + (parseInt(v.stock) || 0), 0) : form.inventory_count} onChange={e => update('inventory_count', parseInt(e.target.value) || 0)}
+                  className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold [&::-webkit-inner-spin-button]:appearance-none" />
               </div>
               <div>
                 <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Delivery Days</label>
-                <input type="number" value={form.delivery_time_days} onChange={e => update('delivery_time_days', e.target.value)}
-                  className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
+                <input type="number" min="0" onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} value={form.delivery_time_days} onChange={e => update('delivery_time_days', e.target.value)}
+                  className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold [&::-webkit-inner-spin-button]:appearance-none" />
               </div>
             </div>
 
@@ -334,7 +335,6 @@ export default function EditDressPage() {
                     <th className="px-4 py-2 font-sans font-medium text-charcoal">Color</th>
                     <th className="px-4 py-2 font-sans font-medium text-charcoal">Price</th>
                     <th className="px-4 py-2 font-sans font-medium text-charcoal">Stock</th>
-                    <th className="px-4 py-2 font-sans font-medium text-charcoal">SKU (Opt)</th>
                     <th className="px-4 py-2 font-sans font-medium text-charcoal text-center">X</th>
                   </tr>
                 </thead>
@@ -345,16 +345,12 @@ export default function EditDressPage() {
                       <td className="px-4 py-2">{allSizes.find(x => x.id === v.size_id)?.name || '-'}</td>
                       <td className="px-4 py-2">{allColors.find(x => x.id === v.color_id)?.name || '-'}</td>
                       <td className="px-4 py-2">
-                        <input type="number" step="0.01" value={v.price} onChange={e => updateVariant(i, 'price', e.target.value)}
-                          className="w-24 px-2 py-1 border border-gray-200 rounded focus:border-gold outline-none" />
+                        <input type="number" step="0.01" min="0" onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} value={v.price} onChange={e => updateVariant(i, 'price', e.target.value)}
+                          className="w-24 px-2 py-1 border border-gray-200 rounded focus:border-gold outline-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </td>
                       <td className="px-4 py-2">
-                        <input type="number" value={v.stock} onChange={e => updateVariant(i, 'stock', parseInt(e.target.value)||0)}
-                          className="w-20 px-2 py-1 border border-gray-200 rounded focus:border-gold outline-none" />
-                      </td>
-                      <td className="px-4 py-2">
-                        <input type="text" value={v.sku} onChange={e => updateVariant(i, 'sku', e.target.value)}
-                          className="w-28 px-2 py-1 border border-gray-200 rounded focus:border-gold outline-none" placeholder="SKU" />
+                        <input type="number" min="0" onKeyDown={(e) => ["e", "E", "+", "-"].includes(e.key) && e.preventDefault()} value={v.stock} onChange={e => updateVariant(i, 'stock', parseInt(e.target.value)||0)}
+                          className="w-20 px-2 py-1 border border-gray-200 rounded focus:border-gold outline-none [&::-webkit-inner-spin-button]:appearance-none" />
                       </td>
                       <td className="px-4 py-2 text-center">
                         <button type="button" onClick={() => removeVariant(i)} className="text-red-500 hover:text-red-700 font-bold">×</button>

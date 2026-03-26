@@ -6,7 +6,8 @@ export default function ContentEditorPage() {
   const [activeTab, setActiveTab] = useState('home')
   const [sections, setSections] = useState({})
   const [pages, setPages] = useState({})
-  const [saving, setSaving] = useState(false)
+  const [savingSection, setSavingSection] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [msg, setMsg] = useState('')
 
   useEffect(() => {
@@ -95,7 +96,7 @@ export default function ContentEditorPage() {
   }, [])
 
   async function saveSection(name) {
-    setSaving(true)
+    setSavingSection(name)
     try {
       await adminUpdateSection(name, sections[name] || {})
       setMsg('Saved!')
@@ -103,11 +104,11 @@ export default function ContentEditorPage() {
     } catch (err) {
       setMsg('Error saving')
     }
-    setSaving(false)
+    setSavingSection(null)
   }
 
   async function savePage(slug) {
-    setSaving(true)
+    setSavingSection(slug)
     try {
       await adminUpdateContent(slug, { content: pages[slug] || {} })
       setMsg('Saved!')
@@ -115,7 +116,7 @@ export default function ContentEditorPage() {
     } catch (err) {
       setMsg('Error saving')
     }
-    setSaving(false)
+    setSavingSection(null)
   }
 
   function updateSection(name, key, value) {
@@ -139,8 +140,9 @@ export default function ContentEditorPage() {
   }
 
   async function handleHeroImageUpload(file, index) {
+    setUploadingImage(true)
     try {
-      const result = await adminUploadMedia(file, 'hero')
+      setUploadingImage(true); const result = await adminUploadMedia(file, 'hero')
       const newSlides = [...heroSlides]
       newSlides[index] = { ...newSlides[index], image: result.url }
       updateHeroSlides(newSlides)
@@ -175,7 +177,7 @@ export default function ContentEditorPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-heading text-charcoal">Content Editor</h1>
-        {msg && <span className="text-sm font-sans text-green-600">{msg}</span>}
+        {(msg || uploadingImage) && <span className="text-sm font-sans text-green-600">{uploadingImage ? 'Uploading image...' : msg}</span>}
       </div>
 
       <div className="flex gap-2 mb-8 border-b border-gray-200">
@@ -243,7 +245,7 @@ export default function ContentEditorPage() {
                 </div>
               ))}
             </div>
-            <button onClick={() => saveSection('hero')} disabled={saving} className="btn-gold text-[10px] mt-4">{saving ? 'SAVING...' : 'SAVE HERO'}</button>
+            <button onClick={() => saveSection('hero')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px] mt-4">{savingSection === 'hero' ? 'SAVING...' : 'SAVE HERO'}</button>
           </div>
 
           {/* Welcome Section */}
@@ -261,7 +263,7 @@ export default function ContentEditorPage() {
                 <input type="text" placeholder="Button Text (e.g., BOOK AN APPOINTMENT)" value={sections.welcome?.cta_btn_text || ''} onChange={e => updateSection('welcome', 'cta_btn_text', e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
               </div>
             </div>
-            <button onClick={() => saveSection('welcome')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE WELCOME</button>
+            <button onClick={() => saveSection('welcome')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px] mt-4">{savingSection === 'welcome' ? 'SAVING...' : 'SAVE WELCOME'}</button>
           </div>
 
           {/* Featured Dresses Section */}
@@ -272,7 +274,7 @@ export default function ContentEditorPage() {
               <input type="text" placeholder="Heading (e.g., Effortlessly Elegant)" value={sections.featured_dresses?.heading || ''} onChange={e => updateSection('featured_dresses', 'heading', e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
               <textarea placeholder="Body Subtext" rows={2} value={sections.featured_dresses?.subtext || ''} onChange={e => updateSection('featured_dresses', 'subtext', e.target.value)} className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
             </div>
-            <button onClick={() => saveSection('featured_dresses')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE FEATURED DRESSES</button>
+            <button onClick={() => saveSection('featured_dresses')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px] mt-4">{savingSection === 'featured_dresses' ? 'SAVING...' : 'SAVE FEATURED DRESSES'}</button>
           </div>
 
           {/* Featured Accessories Section */}
@@ -283,7 +285,7 @@ export default function ContentEditorPage() {
               <input type="text" placeholder="Heading (e.g., Refined & Memorable)" value={sections.featured_accessories?.heading || ''} onChange={e => updateSection('featured_accessories', 'heading', e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
               <textarea placeholder="Body Subtext" rows={2} value={sections.featured_accessories?.subtext || ''} onChange={e => updateSection('featured_accessories', 'subtext', e.target.value)} className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
             </div>
-            <button onClick={() => saveSection('featured_accessories')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE FEATURED ACCESSORIES</button>
+            <button onClick={() => saveSection('featured_accessories')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px] mt-4">{savingSection === 'featured_accessories' ? 'SAVING...' : 'SAVE FEATURED ACCESSORIES'}</button>
           </div>
 
           {/* Appointment CTA */}
@@ -305,7 +307,7 @@ export default function ContentEditorPage() {
                       <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                         const file = e.target.files?.[0]
                         if (file) {
-                          const result = await adminUploadMedia(file, 'home')
+                          setUploadingImage(true); const result = await adminUploadMedia(file, 'home')
                           updateSection('appointment_cta', 'bg_image', result.url)
                         }
                       }} />
@@ -317,7 +319,7 @@ export default function ContentEditorPage() {
                     <input type="file" className="hidden" onChange={async (e) => {
                       const file = e.target.files?.[0]
                       if (file) {
-                        const result = await adminUploadMedia(file, 'home')
+                        setUploadingImage(true); const result = await adminUploadMedia(file, 'home')
                         updateSection('appointment_cta', 'bg_image', result.url)
                       }
                     }} />
@@ -325,7 +327,7 @@ export default function ContentEditorPage() {
                 )}
               </div>
             </div>
-            <button onClick={() => saveSection('appointment_cta')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE APPOINTMENT CTA</button>
+            <button onClick={() => saveSection('appointment_cta')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px] mt-4">{savingSection === 'appointment_cta' ? 'SAVING...' : 'SAVE APPOINTMENT CTA'}</button>
           </div>
 
           {/* Inspiration Section */}
@@ -344,7 +346,7 @@ export default function ContentEditorPage() {
                           const file = e.target.files?.[0]
                           if (file) {
                             try {
-                              const result = await adminUploadMedia(file, 'inspiration')
+                              setUploadingImage(true); const result = await adminUploadMedia(file, 'inspiration')
                               updateSection('inspiration', 'bg_image', result.url)
                               setMsg('Image uploaded!')
                               setTimeout(() => setMsg(''), 2000)
@@ -360,7 +362,7 @@ export default function ContentEditorPage() {
                       const file = e.target.files?.[0]
                       if (file) {
                         try {
-                          const result = await adminUploadMedia(file, 'inspiration')
+                          setUploadingImage(true); const result = await adminUploadMedia(file, 'inspiration')
                           updateSection('inspiration', 'bg_image', result.url)
                           setMsg('Image uploaded!')
                           setTimeout(() => setMsg(''), 2000)
@@ -377,7 +379,7 @@ export default function ContentEditorPage() {
               <textarea placeholder="Subtext" rows={3} value={sections.inspiration?.subtext || ''} onChange={e => updateSection('inspiration', 'subtext', e.target.value)} className="w-full px-4 py-3 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" />
               <input type="text" placeholder="Button Text" value={sections.inspiration?.cta_text || ''} onChange={e => updateSection('inspiration', 'cta_text', e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold" />
             </div>
-            <button onClick={() => saveSection('inspiration')} disabled={saving} className="btn-gold text-[10px] mt-4">SAVE INSPIRATION</button>
+            <button onClick={() => saveSection('inspiration')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px] mt-4">{savingSection === 'inspiration' ? 'SAVING...' : 'SAVE INSPIRATION'}</button>
           </div>
         </div>
       )}
@@ -395,7 +397,7 @@ export default function ContentEditorPage() {
                     <label className="cursor-pointer bg-white/90 px-3 py-1.5 text-xs font-sans rounded hover:bg-white">
                       Replace
                       <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                        const file = e.target.files?.[0]; if (file) { const result = await adminUploadMedia(file, 'about'); updateSection('about', 'hero_image', result.url); }
+                        const file = e.target.files?.[0]; if (file) { setUploadingImage(true); const result = await adminUploadMedia(file, 'about'); updateSection('about', 'hero_image', result.url); }
                       }} />
                     </label>
                     <button onClick={() => updateSection('about', 'hero_image', '')} className="bg-red-500/90 px-3 py-1.5 text-xs font-sans text-white rounded hover:bg-red-600">Delete</button>
@@ -403,7 +405,7 @@ export default function ContentEditorPage() {
                 </div>
               ) : (
                 <label className="block border-2 border-dashed border-gray-300 hover:border-gold rounded-lg p-8 text-center cursor-pointer transition-colors">
-                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const result = await adminUploadMedia(file, 'about'); updateSection('about', 'hero_image', result.url); } }} />
+                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); const result = await adminUploadMedia(file, 'about'); updateSection('about', 'hero_image', result.url); } }} />
                   <div className="text-2xl mb-2">📸</div>
                   <p className="text-sm font-sans text-body-gray">Upload hero image</p>
                 </label>
@@ -446,12 +448,12 @@ export default function ContentEditorPage() {
                   {img ? (
                     <div className="relative"><img src={img} alt={`Gallery ${index + 1}`} className="w-full h-40 object-cover rounded" />
                       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <label className="cursor-pointer bg-white/90 px-2 py-1 text-xs font-sans rounded hover:bg-white">Replace<input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } }} /></label>
+                        <label className="cursor-pointer bg-white/90 px-2 py-1 text-xs font-sans rounded hover:bg-white">Replace<input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } }} /></label>
                         <button onClick={() => updateSection('about', 'gallery', sections.about.gallery.filter((_, i) => i !== index))} className="bg-red-500/90 px-2 py-1 text-xs font-sans text-white rounded hover:bg-red-600">Delete</button>
                       </div>
                     </div>
                   ) : (
-                    <label className="block border-2 border-dashed border-gray-300 hover:border-gold rounded-lg h-40 flex items-center justify-center cursor-pointer transition-colors"><input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } }} /><div className="text-center"><div className="text-2xl mb-1">📸</div><p className="text-xs font-sans text-body-gray">Upload image</p></div></label>
+                    <label className="block border-2 border-dashed border-gray-300 hover:border-gold rounded-lg h-40 flex items-center justify-center cursor-pointer transition-colors"><input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } }} /><div className="text-center"><div className="text-2xl mb-1">📸</div><p className="text-xs font-sans text-body-gray">Upload image</p></div></label>
                   )}
                 </div>
               ))}
@@ -459,7 +461,7 @@ export default function ContentEditorPage() {
             {(sections.about?.gallery || []).length === 0 && <p className="text-sm text-body-gray">No gallery images. Click "Add Image" to upload.</p>}
           </div>
 
-          <button onClick={() => saveSection('about')} disabled={saving} className="btn-gold text-[10px]">{saving ? 'SAVING...' : 'SAVE ALL ABOUT CHANGES'}</button>
+          <button onClick={() => saveSection('about')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px]">{savingSection === 'about' ? 'SAVING...' : 'SAVE ALL ABOUT CHANGES'}</button>
         </div>
       )}
 
@@ -473,7 +475,7 @@ export default function ContentEditorPage() {
             <div><label className="block text-xs font-sans text-body-gray mb-2">Business Hours</label><textarea rows={3} value={sections.contact?.hours || ''} onChange={e => updateSection('contact', 'hours', e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" /></div>
             <div><label className="block text-xs font-sans text-body-gray mb-2">Google Maps Embed URL</label><textarea rows={3} value={sections.contact?.map_embed_url || ''} onChange={e => updateSection('contact', 'map_embed_url', e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" /><p className="text-[10px] text-body-gray mt-1">Example: https://www.google.com/maps/embed?pb=...</p></div>
           </div>
-          <button onClick={() => saveSection('contact')} disabled={saving} className="btn-gold text-[10px] mt-4">{saving ? 'SAVING...' : 'SAVE CONTACT CHANGES'}</button>
+          <button onClick={() => saveSection('contact')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px] mt-4">{savingSection === 'contact' ? 'SAVING...' : 'SAVE CONTACT CHANGES'}</button>
         </div>
       )}
     </div>

@@ -17,7 +17,13 @@ export default function AdminLayout({ children }) {
     }
 
     const token = localStorage.getItem('mynovia_token')
-    if (!token) {
+    const expires = localStorage.getItem('mynovia_token_expires')
+    
+    // Auto logout if 1 hr passed
+    if (!token || !expires || Date.now() > parseInt(expires, 10)) {
+      localStorage.removeItem('mynovia_token')
+      localStorage.removeItem('mynovia_user')
+      localStorage.removeItem('mynovia_token_expires')
       router.push('/admin/login')
       return
     }
@@ -33,8 +39,23 @@ export default function AdminLayout({ children }) {
         // Token is invalid or expired — clear and redirect
         localStorage.removeItem('mynovia_token')
         localStorage.removeItem('mynovia_user')
+        localStorage.removeItem('mynovia_token_expires')
         router.push('/admin/login')
       })
+
+    // Continuous check every minute
+    const interval = setInterval(() => {
+      const currentExpires = localStorage.getItem('mynovia_token_expires')
+      if (!currentExpires || Date.now() > parseInt(currentExpires, 10)) {
+        localStorage.removeItem('mynovia_token')
+        localStorage.removeItem('mynovia_user')
+        localStorage.removeItem('mynovia_token_expires')
+        setAuthed(false)
+        router.push('/admin/login')
+      }
+    }, 60000)
+
+    return () => clearInterval(interval)
   }, [pathname, router])
 
   if (!authed) return null
@@ -46,6 +67,7 @@ export default function AdminLayout({ children }) {
   function handleLogout() {
     localStorage.removeItem('mynovia_token')
     localStorage.removeItem('mynovia_user')
+    localStorage.removeItem('mynovia_token_expires')
     router.push('/admin/login')
   }
 

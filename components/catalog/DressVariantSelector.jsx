@@ -14,8 +14,8 @@ export default function DressVariantSelector({ dress, variants }) {
         </div>
         <div className="flex justify-between items-center py-2 border-b border-bar-tan/20">
           <span className="text-sm font-sans text-body-gray">Availability</span>
-          <span className={`text-sm font-sans font-medium ${dress.is_available ? 'text-green-700' : 'text-gold'}`}>
-            {dress.is_available && dress.inventory_count > 0 ? 'In stock' : 'On request'}
+          <span className={`text-sm font-sans font-medium ${dress.is_available && dress.inventory_count > 0 ? 'text-green-700' : 'text-red-600'}`}>
+            {dress.is_available && dress.inventory_count > 0 ? 'In stock' : 'Not in stock / Contact for stock'}
           </span>
         </div>
         {dress.delivery_time_days && (
@@ -62,9 +62,9 @@ export default function DressVariantSelector({ dress, variants }) {
   // Find exact matching variant
   const currentVariant = useMemo(() => {
     return variants.find(v => 
-      (v.style_id === selectedStyle || (!v.style_id && !selectedStyle)) &&
-      (v.size_id === selectedSize || (!v.size_id && !selectedSize)) &&
-      (v.color_id === selectedColor || (!v.color_id && !selectedColor))
+      (v.dress_styles?.id === selectedStyle || (!v.dress_styles && !selectedStyle)) &&
+      (v.dress_sizes?.id === selectedSize || (!v.dress_sizes && !selectedSize)) &&
+      (v.dress_colors?.id === selectedColor || (!v.dress_colors && !selectedColor))
     )
   }, [selectedStyle, selectedSize, selectedColor, variants])
 
@@ -74,9 +74,9 @@ export default function DressVariantSelector({ dress, variants }) {
     if (!currentVariant && variants.length > 0) {
       // If current combo is invalid, just pick the first variant
       const first = variants[0]
-      if (first.style_id) setSelectedStyle(first.style_id)
-      if (first.size_id) setSelectedSize(first.size_id)
-      if (first.color_id) setSelectedColor(first.color_id)
+      if (first.dress_styles?.id) setSelectedStyle(first.dress_styles.id)
+      if (first.dress_sizes?.id) setSelectedSize(first.dress_sizes.id)
+      if (first.dress_colors?.id) setSelectedColor(first.dress_colors.id)
     }
   }, [currentVariant, variants])
 
@@ -149,8 +149,15 @@ export default function DressVariantSelector({ dress, variants }) {
         </div>
         <div className="flex justify-between items-center py-2 border-b border-bar-tan/20">
           <span className="text-sm font-sans text-body-gray">Availability</span>
-          <span className={`text-sm font-sans font-medium ${(currentVariant?.stock > 0 || (dress.is_available && dress.inventory_count > 0)) ? 'text-green-700' : 'text-gold'}`}>
-            {currentVariant?.stock > 0 ? 'In stock' : (dress.is_available && dress.inventory_count > 0 ? 'In stock' : 'On request / Made to order')}
+          <span className={`text-sm font-sans font-medium ${
+            currentVariant
+              ? (currentVariant.stock > 0 ? 'text-green-700' : 'text-red-600')
+              : (dress.is_available && dress.inventory_count > 0 ? 'text-green-700' : 'text-red-600')
+          }`}>
+            {currentVariant
+              ? (currentVariant.stock > 0 ? 'In stock' : 'Not in stock / Contact for stock')
+              : (dress.is_available && dress.inventory_count > 0 ? 'In stock' : 'Not in stock / Contact for stock')
+            }
           </span>
         </div>
         {currentVariant?.sku && (

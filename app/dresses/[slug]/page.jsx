@@ -94,11 +94,11 @@ export default async function DressDetailPage({ params }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Left Column - Image Gallery */}
-        <div className="lg:sticky lg:top-32 lg:h-[calc(100vh-160px)] overflow-y-auto pr-2 lg:pr-4">
+        <div className="pr-2 lg:pr-4 shrink-0 max-w-[600px] mx-auto w-full">
           <DressImageGallery images={images} dressName={dress.name} />
         </div>
 
-        <div className="lg:py-8">
+        <div className="lg:py-8 w-full">
           {dress.categories && (
             <span className="section-eyebrow block mb-3">{dress.categories.name}</span>
           )}
@@ -108,12 +108,28 @@ export default async function DressDetailPage({ params }) {
             <p className="font-body text-body-gray leading-relaxed mb-8">{dress.description}</p>
           )}
 
-          {tags.length > 0 && (
+          {(tags.length > 0 || variants.length > 0) && (
             <div className="flex flex-wrap gap-2 mb-8">
               {tags.map(tag => (
-                <span key={tag.slug} className="text-xs font-sans tracking-wider px-3 py-1.5 border border-bar-tan text-body-gray">
+                <span key={tag.slug || tag.name || tag.id} className="text-[10px] uppercase font-sans tracking-widest px-3 py-1 border border-bar-tan text-charcoal bg-[#FAF9F6]">
                   {tag.name}
                 </span>
+              ))}
+              {Array.from(new Set(variants.map(v => v.dress_styles?.name).filter(Boolean))).map(style => (
+                 <span key={`style-${style}`} className="text-[10px] uppercase font-sans tracking-widest px-3 py-1 border border-bar-tan text-charcoal bg-[#FAF9F6]">
+                   {style}
+                 </span>
+              ))}
+              {Array.from(new Set(variants.map(v => v.dress_sizes?.name).filter(Boolean))).map(sz => (
+                 <span key={`sz-${sz}`} className="text-[10px] uppercase font-sans tracking-widest px-3 py-1 border border-bar-tan text-charcoal bg-[#FAF9F6]">
+                   {sz}
+                 </span>
+              ))}
+              {Array.from(new Map(variants.filter(v => v.dress_colors).map(v => [v.dress_colors.id, v.dress_colors])).values()).map(color => (
+                 <span key={`color-${color.id}`} className="text-[10px] uppercase font-sans tracking-widest px-3 py-1 border border-bar-tan text-charcoal bg-[#FAF9F6] flex items-center gap-2">
+                   <div className="w-2 h-2 rounded-full border border-gray-300" style={{ backgroundColor: color.hex_code }}></div>
+                   {color.name}
+                 </span>
               ))}
             </div>
           )}

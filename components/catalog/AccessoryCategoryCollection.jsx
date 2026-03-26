@@ -18,9 +18,9 @@ export default function AccessoryCategoryCollection({ categorySlug, categoryName
   }, [categorySlug])
 
   return (
-    <div className="bg-[#FAF9F6] min-h-screen pt-32 pb-24">
+    <div className="bg-[#FAF9F6] min-h-screen pt-12 pb-24">
       {/* Header and Breadcrumbs */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 text-center mb-12">
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 text-center mb-8">
         <div className="flex items-center justify-center text-[11px] font-sans tracking-[1px] text-[#7A7A7A] mb-4">
           <Link href="/" className="hover:text-charcoal transition-colors underline decoration-transparent hover:decoration-currentColor underline-offset-4">Home</Link>
           <span className="mx-2">/</span>
@@ -33,31 +33,8 @@ export default function AccessoryCategoryCollection({ categorySlug, categoryName
         </h1>
       </div>
 
-      {/* Filter and Sort Bar */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 mb-12">
-        <div className="flex items-center justify-between border-t border-b border-[#E5E5E5] py-4 text-xs font-sans tracking-wide text-[#555555]">
-          <button className="flex items-center hover:text-charcoal transition-colors uppercase">
-            <span>Filter</span>
-            <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-            </svg>
-          </button>
-          
-          <div className="hidden md:block text-[#999999]">
-            {accessories.length} products
-          </div>
-
-          <button className="flex items-center hover:text-charcoal transition-colors">
-            <span>Sort by: <span className="text-charcoal">Best selling</span></span>
-            <svg className="w-3 h-3 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
       {/* Collection Grid */}
-      <section className="max-w-[1600px] mx-auto px-6 md:px-12">
+      <section className="max-w-[1600px] mx-auto px-6 md:px-12 mt-8">
         {loading ? (
           <div className="flex justify-center items-center h-64"><Spinner /></div>
         ) : accessories.length > 0 ? (

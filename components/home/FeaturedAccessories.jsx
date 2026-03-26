@@ -35,7 +35,7 @@ export default function FeaturedAccessories({ data, accessories = [] }) {
   }
 
   return (
-    <section ref={sectionRef} className="py-24 px-6 md:px-12 bg-white border-t border-gray-100/50 overflow-hidden">
+    <section ref={sectionRef} className="py-12 px-6 md:px-12 bg-white border-t border-gray-100/50 overflow-hidden">
       <div className="max-w-[1600px] mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20">
         
         {/* Text and context left block */}
@@ -50,7 +50,7 @@ export default function FeaturedAccessories({ data, accessories = [] }) {
             {content.subtext || 'For the bride who wishes to shine with her own light. With sculpted details, intricate lace, and dazzling pieces designed to complement your look from the first to the last dance.'}
           </p>
           
-          <div className="flex items-center gap-6 mb-12">
+          <div className="flex items-center gap-6">
             <button onClick={scrollLeft} className="text-[10px] font-sans font-medium tracking-[2px] text-charcoal/50 hover:text-charcoal transition-colors uppercase flex items-center gap-2">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M15 18l-6-6 6-6"/></svg>
               PREV
@@ -59,15 +59,6 @@ export default function FeaturedAccessories({ data, accessories = [] }) {
               NEXT
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M9 18l6-6-6-6"/></svg>
             </button>
-          </div>
-
-          <div className="relative aspect-[3/4] overflow-hidden w-full max-w-[350px] group/cta shadow-sm">
-            <img src={content.banner_image || "https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=800&q=80"} alt="Accessories detail" className="w-full h-full object-cover transition-transform duration-1000 group-hover/cta:scale-105" />
-            <div className="absolute bottom-6 left-6">
-              <Link href="/accessories" className="bg-white/80 hover:bg-white text-[10px] font-sans tracking-[2px] font-medium uppercase px-5 py-3 transition-colors shadow-sm">
-                SHOP ACCESSORIES
-              </Link>
-            </div>
           </div>
         </motion.div>
 
