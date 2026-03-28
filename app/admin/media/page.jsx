@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { fetchMedia, adminUploadMedia, adminDeleteMedia } from '@/lib/api'
 import ImageUploader from '@/components/admin/ImageUploader'
+import LoadingOverlay from '@/components/admin/LoadingOverlay'
 
 export default function AdminMediaPage() {
   const [media, setMedia] = useState([])
@@ -33,6 +34,7 @@ export default function AdminMediaPage() {
 
   return (
     <div>
+      <LoadingOverlay isLoading={uploading} message="Uploading Media..." />
       <h1 className="text-2xl font-heading text-charcoal mb-8">Gallery</h1>
 
       <div className="mb-8">

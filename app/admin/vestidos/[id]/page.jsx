@@ -8,6 +8,7 @@ import {
   getDressVariants, adminSaveDressVariants
 } from '@/lib/api'
 import ImageUploader from '@/components/admin/ImageUploader'
+import LoadingOverlay from '@/components/admin/LoadingOverlay'
 
 export default function EditDressPage() {
   const router = useRouter()
@@ -196,6 +197,7 @@ export default function EditDressPage() {
 
   return (
     <div className="max-w-4xl pb-20">
+      <LoadingOverlay isLoading={saving} message="Saving changes & Uploading images..." />
       <h1 className="text-2xl font-heading text-charcoal mb-8">Edit Dress</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">

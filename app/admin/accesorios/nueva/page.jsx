@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { adminCreateAccessory, adminUploadAccessoryImage, fetchCategories } from '@/lib/api'
 import ImageUploader from '@/components/admin/ImageUploader'
+import LoadingOverlay from '@/components/admin/LoadingOverlay'
 
 export default function NewAccessoryPage() {
   const router = useRouter()
@@ -45,6 +46,7 @@ export default function NewAccessoryPage() {
 
   return (
     <div className="max-w-3xl">
+      <LoadingOverlay isLoading={saving} message="Saving Accessory & Uploading images..." />
       <h1 className="text-2xl font-heading text-charcoal mb-8">New Accessory</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">

@@ -6,6 +6,7 @@ import {
   adminGetStyles, adminGetSizes, adminGetColors, adminSaveDressVariants
 } from '@/lib/api'
 import ImageUploader from '@/components/admin/ImageUploader'
+import LoadingOverlay from '@/components/admin/LoadingOverlay'
 
 export default function NewDressPage() {
   const router = useRouter()
@@ -143,6 +144,7 @@ export default function NewDressPage() {
 
   return (
     <div className="max-w-4xl pb-20">
+      <LoadingOverlay isLoading={saving} message="Saving Dress & Uploading Images..." />
       <h1 className="text-2xl font-heading text-charcoal mb-8">New Dress</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">

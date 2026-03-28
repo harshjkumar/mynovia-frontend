@@ -8,6 +8,7 @@ import {
   fetchCategories 
 } from '@/lib/api'
 import ImageUploader from '@/components/admin/ImageUploader'
+import LoadingOverlay from '@/components/admin/LoadingOverlay'
 
 export default function EditAccessoryPage() {
   const router = useRouter()
@@ -72,6 +73,7 @@ export default function EditAccessoryPage() {
 
   return (
     <div className="max-w-3xl">
+      <LoadingOverlay isLoading={saving} message="Saving changes & Uploading images..." />
       <h1 className="text-2xl font-heading text-charcoal mb-8">Edit Accessory</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">

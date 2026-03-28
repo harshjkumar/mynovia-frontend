@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { fetchPageContent, fetchSections, adminUpdateContent, adminUpdateSection, adminUploadMedia } from '@/lib/api'
+import LoadingOverlay from '@/components/admin/LoadingOverlay'
 
 export default function ContentEditorPage() {
   const [activeTab, setActiveTab] = useState('home')
@@ -175,9 +176,11 @@ export default function ContentEditorPage() {
 
   return (
     <div>
+      <LoadingOverlay isLoading={uploadingImage} message="Uploading Image..." />
+      <LoadingOverlay isLoading={savingSection !== null} message="Saving changes..." />
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-heading text-charcoal">Content Editor</h1>
-        {(msg || uploadingImage) && <span className="text-sm font-sans text-green-600">{uploadingImage ? 'Uploading image...' : msg}</span>}
+        {msg && <span className="text-sm font-sans text-green-600">{msg}</span>}
       </div>
 
       <div className="flex gap-2 mb-8 border-b border-gray-200">
@@ -307,9 +310,7 @@ export default function ContentEditorPage() {
                       <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                         const file = e.target.files?.[0]
                         if (file) {
-                          setUploadingImage(true); const result = await adminUploadMedia(file, 'home')
-                          updateSection('appointment_cta', 'bg_image', result.url)
-                        }
+                          setUploadingImage(true); try { const result = await adminUploadMedia(file, 'home'); updateSection('appointment_cta', 'bg_image', result.url); } finally { setUploadingImage(false); }
                       }} />
                     </label>
                   </div>
@@ -319,9 +320,7 @@ export default function ContentEditorPage() {
                     <input type="file" className="hidden" onChange={async (e) => {
                       const file = e.target.files?.[0]
                       if (file) {
-                        setUploadingImage(true); const result = await adminUploadMedia(file, 'home')
-                        updateSection('appointment_cta', 'bg_image', result.url)
-                      }
+                        setUploadingImage(true); try { const result = await adminUploadMedia(file, 'home'); updateSection('appointment_cta', 'bg_image', result.url); } finally { setUploadingImage(false); }
                     }} />
                   </label>
                 )}
@@ -346,11 +345,7 @@ export default function ContentEditorPage() {
                           const file = e.target.files?.[0]
                           if (file) {
                             try {
-                              setUploadingImage(true); const result = await adminUploadMedia(file, 'inspiration')
-                              updateSection('inspiration', 'bg_image', result.url)
-                              setMsg('Image uploaded!')
-                              setTimeout(() => setMsg(''), 2000)
-                            } catch (err) { }
+                              setUploadingImage(true); try { const result = await adminUploadMedia(file, 'inspiration'); updateSection('inspiration', 'bg_image', result.url); setMsg('Image uploaded!'); setTimeout(() => setMsg(''), 2000); } catch (err) { } finally { setUploadingImage(false); }
                           }
                         }} />
                       </label>
@@ -362,11 +357,7 @@ export default function ContentEditorPage() {
                       const file = e.target.files?.[0]
                       if (file) {
                         try {
-                          setUploadingImage(true); const result = await adminUploadMedia(file, 'inspiration')
-                          updateSection('inspiration', 'bg_image', result.url)
-                          setMsg('Image uploaded!')
-                          setTimeout(() => setMsg(''), 2000)
-                        } catch (err) { }
+                          setUploadingImage(true); try { const result = await adminUploadMedia(file, 'inspiration'); updateSection('inspiration', 'bg_image', result.url); setMsg('Image uploaded!'); setTimeout(() => setMsg(''), 2000); } catch (err) { } finally { setUploadingImage(false); }
                       }
                     }} />
                     <div className="text-2xl mb-2">📸</div>
@@ -397,7 +388,7 @@ export default function ContentEditorPage() {
                     <label className="cursor-pointer bg-white/90 px-3 py-1.5 text-xs font-sans rounded hover:bg-white">
                       Replace
                       <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
-                        const file = e.target.files?.[0]; if (file) { setUploadingImage(true); const result = await adminUploadMedia(file, 'about'); updateSection('about', 'hero_image', result.url); }
+                        const file = e.target.files?.[0]; if (file) { setUploadingImage(true); try { const result = await adminUploadMedia(file, 'about'); updateSection('about', 'hero_image', result.url); } finally { setUploadingImage(false); } }
                       }} />
                     </label>
                     <button onClick={() => updateSection('about', 'hero_image', '')} className="bg-red-500/90 px-3 py-1.5 text-xs font-sans text-white rounded hover:bg-red-600">Delete</button>
@@ -405,7 +396,7 @@ export default function ContentEditorPage() {
                 </div>
               ) : (
                 <label className="block border-2 border-dashed border-gray-300 hover:border-gold rounded-lg p-8 text-center cursor-pointer transition-colors">
-                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); const result = await adminUploadMedia(file, 'about'); updateSection('about', 'hero_image', result.url); } }} />
+                  <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); try { const result = await adminUploadMedia(file, 'about'); updateSection('about', 'hero_image', result.url); } finally { setUploadingImage(false); } } }} />
                   <div className="text-2xl mb-2">📸</div>
                   <p className="text-sm font-sans text-body-gray">Upload hero image</p>
                 </label>
@@ -448,12 +439,12 @@ export default function ContentEditorPage() {
                   {img ? (
                     <div className="relative"><img src={img} alt={`Gallery ${index + 1}`} className="w-full h-40 object-cover rounded" />
                       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <label className="cursor-pointer bg-white/90 px-2 py-1 text-xs font-sans rounded hover:bg-white">Replace<input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } }} /></label>
+                        <label className="cursor-pointer bg-white/90 px-2 py-1 text-xs font-sans rounded hover:bg-white">Replace<input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); try { const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } finally { setUploadingImage(false); } } }} /></label>
                         <button onClick={() => updateSection('about', 'gallery', sections.about.gallery.filter((_, i) => i !== index))} className="bg-red-500/90 px-2 py-1 text-xs font-sans text-white rounded hover:bg-red-600">Delete</button>
                       </div>
                     </div>
                   ) : (
-                    <label className="block border-2 border-dashed border-gray-300 hover:border-gold rounded-lg h-40 flex items-center justify-center cursor-pointer transition-colors"><input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } }} /><div className="text-center"><div className="text-2xl mb-1">📸</div><p className="text-xs font-sans text-body-gray">Upload image</p></div></label>
+                    <label className="block border-2 border-dashed border-gray-300 hover:border-gold rounded-lg h-40 flex items-center justify-center cursor-pointer transition-colors"><input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); try { const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } finally { setUploadingImage(false); } } }} /><div className="text-center"><div className="text-2xl mb-1">📸</div><p className="text-xs font-sans text-body-gray">Upload image</p></div></label>
                   )}
                 </div>
               ))}
