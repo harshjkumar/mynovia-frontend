@@ -62,7 +62,7 @@ export default function ContentEditorPage() {
         },
         about: {
           hero_image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80',
-          hero_title: 'About Us',
+          hero_title: 'Our Story',
           eyebrow: 'ABOUT MY NOVIA',
           heading: 'Love brought us here. You too.',
           story: "My Novia was born from the passion to make every bride's dream come true, bringing to Almería the most exclusive and elegant trends in bridal fashion.\n\nWe believe that choosing your wedding dress is an experience that should be memorable, deeply personal, and completely free of stress.\n\nOur team of experts dedicates themselves completely to understanding your style, your personality, and the vision of your perfect day, accompanying you at every step of this beautiful journey.",
@@ -169,7 +169,7 @@ export default function ContentEditorPage() {
 
   const tabs = [
     { id: 'home', label: 'Homepage' },
-    { id: 'about', label: 'About Us' },
+    { id: 'about', label: 'Our Story' },
     { id: 'contact', label: 'Contact' }
   ]
 

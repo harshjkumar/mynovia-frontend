@@ -3,7 +3,7 @@ import AboutContent from '@/components/about/AboutContent'
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'
 
 export const metadata = {
-  title: 'About Us — My Novia',
+  title: 'Our Story — My Novia',
   description: 'Discover the story of My Novia, your favorite bridal boutique in Almería.'
 }
 

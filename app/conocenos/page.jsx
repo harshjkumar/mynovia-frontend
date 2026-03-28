@@ -1,7 +1,7 @@
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'
 
 export const metadata = {
-  title: 'About Us — My Novia',
+  title: 'Our Story — My Novia',
   description: 'Discover the story of My Novia, your favorite bridal boutique in Almería.'
 }
 
@@ -28,7 +28,7 @@ export default async function ConocenosPage() {
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-charcoal/40 flex items-center justify-center">
-          <h1 className="text-white font-display text-5xl md:text-6xl">About Us</h1>
+          <h1 className="text-white font-display text-5xl md:text-6xl">Our Story</h1>
         </div>
       </section>
 

@@ -75,7 +75,7 @@ export default function Navbar() {
 
   const navLinksRight = [
     { label: 'GALLERY', href: '/gallery' },
-    { label: 'ABOUT US', href: '/about' },
+    { label: 'OUR STORY', href: '/about' },
     { label: 'CONTACT', href: '/contact' }
   ]
 

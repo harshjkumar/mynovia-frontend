@@ -39,7 +39,7 @@ export default function EditDressPage() {
   })
 
   useEffect(() => {
-    fetchCategories().then(setCategories).catch(() => {})
+    fetchCategories('dress').then(setCategories).catch(() => {})
     fetchTags().then(setTags).catch(() => {})
     Promise.all([adminGetStyles(), adminGetSizes(), adminGetColors()])
       .then(([st, si, co]) => {

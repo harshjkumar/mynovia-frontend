@@ -57,6 +57,7 @@ export default function AdminReviewsPage() {
             <tr>
               <th className="text-left px-6 py-3 text-xs font-sans text-body-gray uppercase">Author</th>
               <th className="text-left px-6 py-3 text-xs font-sans text-body-gray uppercase">Rating</th>
+              <th className="text-left px-6 py-3 text-xs font-sans text-body-gray uppercase">Date</th>
               <th className="text-left px-6 py-3 text-xs font-sans text-body-gray uppercase hidden md:table-cell">Text</th>
               <th className="text-left px-6 py-3 text-xs font-sans text-body-gray uppercase">Actions</th>
             </tr>
@@ -68,6 +69,7 @@ export default function AdminReviewsPage() {
               <tr key={r.id} className="hover:bg-gray-50">
                 <td className="px-6 py-3 font-medium text-charcoal">{r.author_name}</td>
                 <td className="px-6 py-3 text-gold">{'★'.repeat(r.rating||0)}</td>
+                <td className="px-6 py-3 text-body-gray text-xs">{new Date(r.created_at).toLocaleDateString()}</td>
                 <td className="px-6 py-3 text-body-gray text-xs max-w-xs truncate hidden md:table-cell">{r.review_text}</td>
                 <td className="px-6 py-3">
                   <div className="flex items-center gap-4">

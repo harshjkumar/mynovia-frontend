@@ -36,17 +36,12 @@ export default function DressCard({ dress }) {
       </Link>
 
       <div className="px-1">
-        <div className="flex items-start justify-between mb-2">
+        <div className="flex items-start mb-2">
           <Link href={`/dresses/${dress.slug}`}>
             <h3 className="font-heading text-[22px] text-[#333] hover:text-[#555] transition-colors font-light tracking-wide truncate pr-4">
               {dress.name}
             </h3>
           </Link>
-          <button className="text-[#a09e9e] hover:text-[#f05f42] transition-colors mt-1">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-          </button>
         </div>
         
         <p className="font-sans text-[13px] leading-relaxed text-[#7a7a7a] font-light mb-3 line-clamp-2">

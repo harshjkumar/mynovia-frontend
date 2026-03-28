@@ -4,7 +4,7 @@ const footerLinks = [
   { label: 'Dresses', href: '/dresses' },
   { label: 'Accessories', href: '/accessories' },
   { label: 'Gallery', href: '/gallery' },
-  { label: 'About Us', href: '/about' },
+  { label: 'Our Story', href: '/about' },
   { label: 'Contact', href: '/contact' },
   { label: 'Book Appointment', href: '/book-appointment' }
 ]
@@ -16,7 +16,7 @@ export default function Footer() {
         
 
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 border-t border-gray-200 pt-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           <div>
             <h4 className="font-sans text-[10px] font-semibold tracking-[2px] uppercase text-charcoal/80 mb-6">
               Our Brands

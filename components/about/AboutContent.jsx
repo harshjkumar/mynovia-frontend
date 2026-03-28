@@ -45,7 +45,7 @@ export default function AboutContent({ content }) {
               {content.eyebrow || 'ABOUT MY NOVIA'}
             </span>
             <h1 className="font-heading text-6xl md:text-8xl text-white font-light tracking-wide italic shadow-sm">
-              {content.hero_title || 'About Us'}
+              {content.hero_title || 'Our Story'}
             </h1>
           </motion.div>
         </div>
