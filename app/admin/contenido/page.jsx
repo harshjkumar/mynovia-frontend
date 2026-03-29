@@ -151,6 +151,8 @@ export default function ContentEditorPage() {
       setTimeout(() => setMsg(''), 2000)
     } catch (err) {
       setMsg('Error uploading image')
+    } finally {
+      setUploadingImage(false)
     }
   }
 
@@ -311,6 +313,7 @@ export default function ContentEditorPage() {
                         const file = e.target.files?.[0]
                         if (file) {
                           setUploadingImage(true); try { const result = await adminUploadMedia(file, 'home'); updateSection('appointment_cta', 'bg_image', result.url); } finally { setUploadingImage(false); }
+                        }
                       }} />
                     </label>
                   </div>
@@ -321,6 +324,7 @@ export default function ContentEditorPage() {
                       const file = e.target.files?.[0]
                       if (file) {
                         setUploadingImage(true); try { const result = await adminUploadMedia(file, 'home'); updateSection('appointment_cta', 'bg_image', result.url); } finally { setUploadingImage(false); }
+                      }
                     }} />
                   </label>
                 )}
@@ -344,8 +348,7 @@ export default function ContentEditorPage() {
                         <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                           const file = e.target.files?.[0]
                           if (file) {
-                            try {
-                              setUploadingImage(true); try { const result = await adminUploadMedia(file, 'inspiration'); updateSection('inspiration', 'bg_image', result.url); setMsg('Image uploaded!'); setTimeout(() => setMsg(''), 2000); } catch (err) { } finally { setUploadingImage(false); }
+                            setUploadingImage(true); try { const result = await adminUploadMedia(file, 'inspiration'); updateSection('inspiration', 'bg_image', result.url); setMsg('Image uploaded!'); setTimeout(() => setMsg(''), 2000); } catch (err) { } finally { setUploadingImage(false); }
                           }
                         }} />
                       </label>
@@ -356,8 +359,7 @@ export default function ContentEditorPage() {
                     <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                       const file = e.target.files?.[0]
                       if (file) {
-                        try {
-                          setUploadingImage(true); try { const result = await adminUploadMedia(file, 'inspiration'); updateSection('inspiration', 'bg_image', result.url); setMsg('Image uploaded!'); setTimeout(() => setMsg(''), 2000); } catch (err) { } finally { setUploadingImage(false); }
+                        setUploadingImage(true); try { const result = await adminUploadMedia(file, 'inspiration'); updateSection('inspiration', 'bg_image', result.url); setMsg('Image uploaded!'); setTimeout(() => setMsg(''), 2000); } catch (err) { } finally { setUploadingImage(false); }
                       }
                     }} />
                     <div className="text-2xl mb-2">📸</div>
