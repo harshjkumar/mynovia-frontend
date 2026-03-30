@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 
 export default function HeroBanner({ data }) {
-  const slides = data?.slides || [
+  const defaultSlides = [
     {
       image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80',
       heading: 'Unique wedding dresses for every story',
@@ -13,6 +13,7 @@ export default function HeroBanner({ data }) {
       cta_link: '/dresses'
     }
   ]
+  const slides = Array.isArray(data?.slides) && data.slides.length > 0 ? data.slides : defaultSlides
 
   const [current, setCurrent] = useState(0)
   const [paused, setPaused] = useState(false)

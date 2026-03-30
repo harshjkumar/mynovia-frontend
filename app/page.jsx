@@ -11,10 +11,10 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'
 async function getHomeData() {
   try {
     const [sectionsRes, dressesRes, accessoriesRes, reviewsRes] = await Promise.allSettled([
-      fetch(`${API}/sections`, { next: { revalidate: 30 } }),
-      fetch(`${API}/dresses?featured=true`, { next: { revalidate: 30 } }),
-      fetch(`${API}/accessories`, { next: { revalidate: 30 } }),
-      fetch(`${API}/reviews`, { next: { revalidate: 30 } })
+      fetch(`${API}/sections`, { cache: 'no-store' }),
+      fetch(`${API}/dresses?featured=true`, { cache: 'no-store' }),
+      fetch(`${API}/accessories`, { cache: 'no-store' }),
+      fetch(`${API}/reviews`, { cache: 'no-store' })
     ])
 
     const safeJson = async (res) => {

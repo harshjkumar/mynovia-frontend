@@ -431,27 +431,35 @@ export default function ContentEditorPage() {
           </div>
 
           <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-sans text-sm font-semibold text-charcoal">Gallery Images</h3>
-              <button onClick={() => updateSection('about', 'gallery', [...(sections.about?.gallery || []), ''])} className="px-3 py-1.5 text-xs font-sans bg-charcoal text-white hover:bg-gold transition-colors">+ Add Image</button>
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="font-sans text-sm font-semibold text-charcoal">Gallery Images (Exactly 3 Required)</h3>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-              {(sections.about?.gallery || []).map((img, index) => (
-                <div key={index} className="relative group">
-                  {img ? (
-                    <div className="relative"><img src={img} alt={`Gallery ${index + 1}`} className="w-full h-40 object-cover rounded" />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <label className="cursor-pointer bg-white/90 px-2 py-1 text-xs font-sans rounded hover:bg-white">Replace<input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); try { const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } finally { setUploadingImage(false); } } }} /></label>
-                        <button onClick={() => updateSection('about', 'gallery', sections.about.gallery.filter((_, i) => i !== index))} className="bg-red-500/90 px-2 py-1 text-xs font-sans text-white rounded hover:bg-red-600">Delete</button>
+            <p className="text-xs font-sans text-body-gray mb-4">Upload exactly 3 images to populate the specific gallery sections of the About Us page layout.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-4">
+              {[
+                { label: "Image 1: Brand Story", desc: "Displays next to 'Love brought us here...'" },
+                { label: "Image 2: Large Display", desc: "Main large image in the bottom gallery" },
+                { label: "Image 3: Small Detail", desc: "Stacked detail image in the bottom gallery" }
+              ].map((slot, index) => {
+                const img = (sections.about?.gallery || [])[index];
+                return (
+                  <div key={index} className="relative group border border-gray-100 p-3 rounded-lg bg-gray-50">
+                    <p className="font-sans text-xs font-semibold text-charcoal mb-1">{slot.label}</p>
+                    <p className="font-sans text-[10px] text-body-gray mb-3 pb-2 border-b border-gray-200">{slot.desc}</p>
+                    {img ? (
+                      <div className="relative"><img src={img} alt={`Gallery ${index + 1}`} className="w-full h-40 object-cover rounded" />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <label className="cursor-pointer bg-white/90 px-2 py-1 text-xs font-sans rounded hover:bg-white">Replace<input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); try { const result = await adminUploadMedia(file, 'about'); const newGallery = [...(sections.about?.gallery || [])]; while(newGallery.length < 3) newGallery.push(''); newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } finally { setUploadingImage(false); } } }} /></label>
+                          <button onClick={() => { const newGallery = [...(sections.about?.gallery || [])]; while(newGallery.length < 3) newGallery.push(''); newGallery[index] = ''; updateSection('about', 'gallery', newGallery); } } className="bg-red-500/90 px-2 py-1 text-xs font-sans text-white rounded hover:bg-red-600">Delete</button>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <label className="block border-2 border-dashed border-gray-300 hover:border-gold rounded-lg h-40 flex items-center justify-center cursor-pointer transition-colors"><input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); try { const result = await adminUploadMedia(file, 'about'); const newGallery = [...sections.about.gallery]; newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } finally { setUploadingImage(false); } } }} /><div className="text-center"><div className="text-2xl mb-1">📸</div><p className="text-xs font-sans text-body-gray">Upload image</p></div></label>
-                  )}
-                </div>
-              ))}
+                    ) : (
+                      <label className="block border-2 border-dashed border-gray-300 hover:border-gold rounded-lg h-40 flex items-center justify-center cursor-pointer transition-colors"><input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) { setUploadingImage(true); try { const result = await adminUploadMedia(file, 'about'); const newGallery = [...(sections.about?.gallery || [])]; while(newGallery.length < 3) newGallery.push(''); newGallery[index] = result.url; updateSection('about', 'gallery', newGallery); } finally { setUploadingImage(false); } } }} /><div className="text-center"><div className="text-2xl mb-1">📸</div><p className="text-xs font-sans text-body-gray">Upload {slot.label}</p></div></label>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            {(sections.about?.gallery || []).length === 0 && <p className="text-sm text-body-gray">No gallery images. Click "Add Image" to upload.</p>}
           </div>
 
           <button onClick={() => saveSection('about')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px]">{savingSection === 'about' ? 'SAVING...' : 'SAVE ALL ABOUT CHANGES'}</button>

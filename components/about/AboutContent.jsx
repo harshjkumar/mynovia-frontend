@@ -14,10 +14,17 @@ export default function AboutContent({ content }) {
   const yHeroText = useTransform(scrollYProgress, [0, 0.2], [0, -100])
   const yHeroImg = useTransform(scrollYProgress, [0, 1], [0, 200])
   
-  const galleryImgs = content.gallery || [
+  const defaultGallery = [
     'https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80',
     'https://images.unsplash.com/photo-1522653216850-4f1415a174fb?w=800&q=80',
     'https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80'
+  ]
+  
+  const dbGallery = Array.isArray(content.gallery) ? content.gallery : [];
+  const galleryImgs = [
+    dbGallery[0] || defaultGallery[0],
+    dbGallery[1] || defaultGallery[1],
+    dbGallery[2] || defaultGallery[2]
   ]
 
   return (
