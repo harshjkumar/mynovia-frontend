@@ -109,6 +109,31 @@ export default function EditDressPage() {
     setFn(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
   }
 
+  // Select All toggles for each category
+  function toggleAllStyles() {
+    if (selectedStyles.length === allStyles.length) {
+      setSelectedStyles([])
+    } else {
+      setSelectedStyles(allStyles.map(s => s.id))
+    }
+  }
+
+  function toggleAllSizes() {
+    if (selectedSizes.length === allSizes.length) {
+      setSelectedSizes([])
+    } else {
+      setSelectedSizes(allSizes.map(s => s.id))
+    }
+  }
+
+  function toggleAllColors() {
+    if (selectedColors.length === allColors.length) {
+      setSelectedColors([])
+    } else {
+      setSelectedColors(allColors.map(c => c.id))
+    }
+  }
+
   // Generate variants
   function generateCombinations() {
     const defaultPrice = form.price || '0'
@@ -284,7 +309,12 @@ export default function EditDressPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             {/* Styles */}
             <div>
-              <p className="text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Select Styles</p>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <p className="text-xs font-sans font-semibold tracking-wider text-charcoal uppercase">Select Styles</p>
+                <button type="button" onClick={toggleAllStyles} className="px-3 py-1 bg-gold text-white text-xs rounded font-sans font-semibold hover:bg-opacity-90 transition">
+                  {selectedStyles.length === allStyles.length && allStyles.length > 0 ? 'Clear All' : 'Select All'}
+                </button>
+              </div>
               <div className="border border-gray-200 rounded p-3 h-40 overflow-y-auto space-y-2">
                 {allStyles.length === 0 ? <p className="text-xs text-body-gray italic">No styles available</p> : allStyles.map(s => (
                   <label key={s.id} className="flex items-center gap-2 cursor-pointer">
@@ -296,7 +326,12 @@ export default function EditDressPage() {
             </div>
             {/* Sizes */}
             <div>
-              <p className="text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Select Sizes</p>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <p className="text-xs font-sans font-semibold tracking-wider text-charcoal uppercase">Select Sizes</p>
+                <button type="button" onClick={toggleAllSizes} className="px-3 py-1 bg-gold text-white text-xs rounded font-sans font-semibold hover:bg-opacity-90 transition">
+                  {selectedSizes.length === allSizes.length && allSizes.length > 0 ? 'Clear All' : 'Select All'}
+                </button>
+              </div>
               <div className="border border-gray-200 rounded p-3 h-40 overflow-y-auto space-y-2">
                 {allSizes.length === 0 ? <p className="text-xs text-body-gray italic">No sizes available</p> : allSizes.map(s => (
                   <label key={s.id} className="flex items-center gap-2 cursor-pointer">
@@ -308,7 +343,12 @@ export default function EditDressPage() {
             </div>
             {/* Colors */}
             <div>
-              <p className="text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">Select Colors</p>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <p className="text-xs font-sans font-semibold tracking-wider text-charcoal uppercase">Select Colors</p>
+                <button type="button" onClick={toggleAllColors} className="px-3 py-1 bg-gold text-white text-xs rounded font-sans font-semibold hover:bg-opacity-90 transition">
+                  {selectedColors.length === allColors.length && allColors.length > 0 ? 'Clear All' : 'Select All'}
+                </button>
+              </div>
               <div className="border border-gray-200 rounded p-3 h-40 overflow-y-auto space-y-2">
                 {allColors.length === 0 ? <p className="text-xs text-body-gray italic">No colors available</p> : allColors.map(c => (
                   <label key={c.id} className="flex items-center gap-2 cursor-pointer">

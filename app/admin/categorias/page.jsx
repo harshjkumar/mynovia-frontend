@@ -37,7 +37,7 @@ export default function CategoriesPage() {
   const handleCreateNew = () => {
     setIsCreating(true)
     setEditingId(null)
-    setEditData({ name: '', slug: '', image_url: '' })
+    setEditData({ name: '', slug: '', image_url: '', type: activeTab })
     setNewImage(null)
   }
 
@@ -47,7 +47,8 @@ export default function CategoriesPage() {
     setEditData({
       name: category.name,
       slug: category.slug,
-      image_url: category.image_url || ''
+      image_url: category.image_url || '',
+      type: category.type || 'dress'
     })
     setNewImage(null)
   }
@@ -73,7 +74,7 @@ export default function CategoriesPage() {
       const fd = new FormData()
       fd.append('name', editData.name)
       fd.append('slug', editData.slug)
-      fd.append('type', activeTab)
+      fd.append('type', editData.type || 'dress')
       if (newImage) {
         fd.append('image', newImage)
       } else if (editData.image_url) {
@@ -153,7 +154,7 @@ export default function CategoriesPage() {
             <div className="bg-white border text-charcoal border-gold p-6 shadow-sm mb-6">
               <h2 className="text-lg font-heading mb-4">{isCreating ? 'Create New Category' : 'Edit Category'}</h2>
               <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label className="block text-xs font-sans font-semibold tracking-wider uppercase mb-2">Category Name</label>
                     <input
@@ -172,6 +173,17 @@ export default function CategoriesPage() {
                       placeholder="Leave blank to auto-generate"
                       className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold"
                     />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-sans font-semibold tracking-wider uppercase mb-2">Type</label>
+                    <select
+                      value={editData.type || 'dress'}
+                      onChange={(e) => setEditData({ ...editData, type: e.target.value })}
+                      className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold"
+                    >
+                      <option value="dress">Dresses</option>
+                      <option value="accessory">Accessories</option>
+                    </select>
                   </div>
                 </div>
 
@@ -221,6 +233,7 @@ export default function CategoriesPage() {
                 <div>
                   <h2 className="text-xl font-heading text-charcoal mb-1">{category.name}</h2>
                   <p className="text-xs text-body-gray font-sans tracking-wide">SLUG: {category.slug}</p>
+                  <p className="text-xs text-gold font-sans tracking-wide mt-1">TYPE: {category.type === 'accessory' ? 'ACCESSORIES' : 'DRESSES'}</p>
                 </div>
               </div>
               <div className="flex flex-col gap-2 border-l border-gray-100 pl-6">

@@ -7,32 +7,64 @@ import { fetchAccessories, fetchCategories } from '@/lib/api'
 export default function AccessoriesPage() {
   const [accessories, setAccessories] = useState([])
   const [categories, setCategories] = useState([])
+  const [selectedStyle, setSelectedStyle] = useState(null)
+  const [availableStyles, setAvailableStyles] = useState([])
   
+  // Default descriptions for categories
   const categoryDescriptions = {
-    'combs': 'Exquisite combs to add a touch of sparkle to your bridal hair.',
-    'tiaras': 'Feel like a queen on your special day with our stunning tiaras.',
-    'belt': 'Elegant belts and sashes to perfectly accentuate your waist.',
-    'veils': 'Classic and modern veils to complete your romantic bridal look.',
-    'shoes': 'Comfortable and beautiful shoes for every step down the aisle.',
-    'suspenders': 'Stylish suspenders for a perfect fit and unique look.'
+    'combs': 'Elegant hair accessories to complete your bridal look.',
+    'tiaras': 'Stunning tiaras and headpieces for your special day.',
+    'belt': 'Beautiful belts and sashes to define your waist.',
+    'veils': 'Exquisite veils in various lengths and styles.',
+    'shoes': 'Comfortable and elegant bridal footwear.',
+    'suspenders': 'Decorative garters and leg accessories.'
   }
   
   useEffect(() => {
-    fetchAccessories().then(data => setAccessories(data || [])).catch(() => setAccessories([]))
+    fetchAccessories().then(data => {
+      setAccessories(data || [])
+      // Extract unique styles from accessories
+      if (data && Array.isArray(data)) {
+        const stylesMap = new Map()
+        data.forEach(accessory => {
+          // Get variants with styles
+          if (Array.isArray(accessory.variants)) {
+            accessory.variants.forEach(variant => {
+              if (variant.dress_styles) {
+                stylesMap.set(variant.dress_styles.id, variant.dress_styles)
+              }
+            })
+          }
+        })
+        setAvailableStyles(Array.from(stylesMap.values()))
+      }
+    }).catch(() => setAccessories([]))
     
     fetchCategories('accessory').then(data => {
       if (data && Array.isArray(data)) {
-        const enrichedCategories = data.map(cat => ({
+        const enrichedCategories = data
+          .map(cat => ({
             ...cat,
             title: cat.name,
-            description: categoryDescriptions[cat.slug] || cat.description || 'Discover our exclusive pieces.'
+            description: categoryDescriptions[cat.slug] || cat.description || `Discover our exclusive ${cat.name} collection.`
           }))
         setCategories(enrichedCategories)
       }
     }).catch(() => setCategories([]))
   }, [])
 
-  const categoriesData = categories
+  // Use fetched categories, fallback to empty array
+  const categoriesData = categories.length > 0 ? categories : []
+
+  // Filter accessories based on selected style
+  const filteredAccessories = selectedStyle 
+    ? accessories.filter(accessory => {
+        if (Array.isArray(accessory.variants)) {
+          return accessory.variants.some(variant => variant.dress_styles?.id === selectedStyle)
+        }
+        return false
+      })
+    : accessories
 
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
@@ -49,11 +81,14 @@ export default function AccessoriesPage() {
             animate={{ scale: 1, opacity: 0.8 }}
             transition={{ duration: 2, ease: "easeOut" }}
             src="/images/accessories_hero.png"
-            alt="Wedding Accessories Collection"
+            alt="Bridal Accessories Collection"
             className="w-full h-full object-cover"
           />
+          {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/65" />
+          {/* Bottom gradient */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#FAF9F6] via-transparent to-black/40" />
+          {/* Additional radial overlay for center text area */}
           <div className="absolute inset-0 bg-radial-gradient" style={{
             background: 'radial-gradient(circle at center, rgba(0,0,0,0.4), rgba(0,0,0,0.8))'
           }} />
@@ -66,7 +101,7 @@ export default function AccessoriesPage() {
           transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
           className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6 w-full max-w-5xl mx-auto"
         >
-          <span className="text-[12px] font-sans tracking-[6px] uppercase block mb-6 text-white font-semibold" style={{ textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6)' }}>EXCLUSIVE PIECES</span>
+          <span className="text-[12px] font-sans tracking-[6px] uppercase block mb-6 text-white font-semibold" style={{ textShadow: '0 4px 12px rgba(0,0,0,0.8), 0 2px 6px rgba(0,0,0,0.6)' }}>LUXURY COLLECTION</span>
           <h1 className="font-heading text-6xl md:text-8xl lg:text-9xl font-light mb-8 tracking-wide" style={{ textShadow: '0 6px 20px rgba(0,0,0,0.9), 0 3px 10px rgba(0,0,0,0.8)' }}>
             Our <em>Accessories</em>
           </h1>
@@ -77,16 +112,45 @@ export default function AccessoriesPage() {
         </motion.div>
       </section>
 
-      {/* Category Sections */}
-      <div id="collections" className="py-24 bg-[#FAF9F6] relative z-20">
+      {/* Main Content Area */}
+      <div id="collections" className="bg-[#FAF9F6] relative z-20">
+        
+        {/* Categories Grid Header */}
+        <section className="pt-24 pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
+          <h2 className="font-heading text-4xl lg:text-5xl text-[#333] mb-4 font-light">Shop by Category</h2>
+          <p className="font-body text-[#7a7a7a] text-sm max-w-xl mx-auto mb-16">
+            Explore our curated collections of exquisite accessories to complement your bridal look.
+          </p>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {categoriesData.map(cat => (
+              <Link key={cat.slug} href={`/accessories/${cat.slug}`} className="group block text-left">
+                <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe8e3] mb-4 group-hover:shadow-lg transition-shadow duration-500">
+                  <img
+                    src={cat.image_url || cat.image || '/images/cat_accessories.png'}
+                    alt={cat.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
+                </div>
+                <h3 className="font-heading text-2xl text-[#333] font-light mb-1 group-hover:text-gold transition-colors">{cat.title}</h3>
+                <span className="text-[10px] uppercase tracking-[2px] font-sans text-[#a09e9e] border-b border-transparent group-hover:border-gold group-hover:text-gold transition-colors pb-1">Shop Collection</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Category Specific Sections */}
+
         {categoriesData.map((cat, index) => {
-          const catAccs = accessories.filter(a => a.categories?.slug === cat.slug || false)
+          const catAccessories = accessories.filter(a => a.categories?.slug === cat.slug || false)
           const isEven = index % 2 === 0
           
           return (
             <section key={cat.slug} className={`py-20 md:py-32 px-6 md:px-12 max-w-[1800px] mx-auto border-b border-[#E5E5E5] last:border-0 ${!isEven ? 'bg-white' : ''}`}>
               <div className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-stretch gap-12 lg:gap-24`}>
                 
+                {/* Category Cover */}
                 <motion.div 
                   initial={{ opacity: 0, x: isEven ? -50 : 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -98,7 +162,7 @@ export default function AccessoriesPage() {
                     <Link href={`/accessories/${cat.slug}`} className="group block">
                       <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe8e3] group-hover:shadow-xl transition-shadow duration-700">
                         <img 
-                          src={cat.image_url || cat.image || 'https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=800&q=80'} 
+                          src={cat.image_url || cat.image || '/images/cat_accessories.png'} 
                           alt={cat.title} 
                           className="w-full h-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
                         />
@@ -125,6 +189,7 @@ export default function AccessoriesPage() {
                   </div>
                 </motion.div>
 
+                {/* Horizontal Accessory Slider */}
                 <motion.div 
                   initial={{ opacity: 0, y: 50 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -132,7 +197,7 @@ export default function AccessoriesPage() {
                   transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
                   className="w-full lg:w-7/12 overflow-hidden flex flex-col justify-center"
                 >
-                  {catAccs.length > 0 ? (
+                  {catAccessories.length > 0 ? (
                     <motion.div 
                       variants={{
                         hidden: {},
@@ -143,27 +208,27 @@ export default function AccessoriesPage() {
                       viewport={{ once: true, margin: "-10%" }}
                       className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                     >
-                      {catAccs.slice(0, 6).map((acc, i) => {
-                        const imgUrl = acc.accessory_images?.sort((a,b)=>a.display_order-b.display_order)?.[0]?.image_url || 'https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=400&q=80';
+                      {catAccessories.slice(0, 6).map((accessory, i) => {
+                        const imgUrl = accessory.accessory_images?.sort((a,b)=>a.display_order-b.display_order)?.[0]?.image_url || 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80';
                         return (
                           <motion.div 
                             variants={{ hidden: { opacity: 0, x: 50 }, show: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } } }}
-                            key={acc.id} 
+                            key={accessory.id} 
                             className="w-[85%] md:w-[320px] lg:w-[350px] flex-shrink-0 snap-center group block"
                           >
-                            <Link href={`/accessories/${acc.slug}`}>
+                            <Link href={`/accessories/${accessory.slug}`}>
                               <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe8e3] mb-5 group-hover:shadow-md transition-shadow">
-                                <img src={imgUrl} alt={acc.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                <img src={imgUrl} alt={accessory.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                               </div>
-                              <h3 className="font-heading text-xl text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-1 truncate">{acc.name}</h3>
+                              <h3 className="font-heading text-2xl text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-1 truncate">{accessory.name}</h3>
                               <p className="font-sans text-[12px] text-[#b3b3b3] uppercase tracking-wider">{cat.title} Accessory</p>
                             </Link>
                           </motion.div>
                       )})}
-                      {catAccs.length > 6 && (
+                      {catAccessories.length > 6 && (
                         <div className="w-[85%] md:w-[320px] lg:w-[350px] flex-shrink-0 snap-center flex items-center justify-center bg-transparent border border-[#E5E5E5] group">
                           <Link href={`/accessories/${cat.slug}`} className="flex flex-col items-center gap-3 text-[#333] group-hover:text-[#f05f42] transition-colors p-12">
-                            <span className="font-heading text-xl font-light">See all {catAccs.length}</span>
+                            <span className="font-heading text-xl font-light">See all {catAccessories.length}</span>
                             <span className="text-[10px] font-sans tracking-[2px] uppercase border-b border-currentColor pb-1">View Category</span>
                           </Link>
                         </div>
@@ -195,11 +260,45 @@ export default function AccessoriesPage() {
           >
             <h2 className="font-heading text-5xl lg:text-6xl text-[#333] mb-4 font-light text-center">All Our Accessories</h2>
             <p className="font-body text-[#7a7a7a] text-sm leading-relaxed text-center max-w-2xl mx-auto">
-              Explore our complete collection of bridal veils, tiaras, delicate combs, and more.
+              Explore our complete collection of bridal accessories to complete your perfect look
             </p>
           </motion.div>
-
-          {accessories.length > 0 ? (
+          {/* Style Filter */}
+          {availableStyles.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="mb-12 flex flex-wrap gap-3 justify-center items-center"
+            >
+              <span className="text-sm font-sans font-semibold text-charcoal uppercase tracking-wide">Filter by Style:</span>
+              <button
+                onClick={() => setSelectedStyle(null)}
+                className={`text-sm font-sans px-4 py-2 border transition-all ${
+                  selectedStyle === null 
+                    ? 'border-gold bg-gold text-white' 
+                    : 'border-gray-300 text-body-gray hover:border-gold hover:text-charcoal'
+                }`}
+              >
+                All Styles
+              </button>
+              {availableStyles.map(style => (
+                <button
+                  key={style.id}
+                  onClick={() => setSelectedStyle(style.id)}
+                  className={`text-sm font-sans px-4 py-2 border transition-all ${
+                    selectedStyle === style.id 
+                      ? 'border-gold bg-gold text-white' 
+                      : 'border-gray-300 text-body-gray hover:border-gold hover:text-charcoal'
+                  }`}
+                >
+                  {style.name}
+                </button>
+              ))}
+            </motion.div>
+          )}
+          {filteredAccessories.length > 0 ? (
             <motion.div 
               variants={{
                 hidden: {},
@@ -210,25 +309,25 @@ export default function AccessoriesPage() {
               viewport={{ once: true, margin: "-10%" }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
             >
-              {accessories.map((acc) => {
-                const imgUrl = acc.accessory_images?.sort((a,b)=>a.display_order-b.display_order)?.[0]?.image_url || 'https://images.unsplash.com/photo-1549416878-b9ca95e28ce4?w=400&q=80';
-                const categoryName = acc.categories?.name || 'Accessory';
+              {filteredAccessories.map((accessory) => {
+                const imgUrl = accessory.accessory_images?.sort((a,b)=>a.display_order-b.display_order)?.[0]?.image_url || 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80';
+                const categoryName = accessory.categories?.name || 'Accessory';
                 return (
                   <motion.div
                     variants={{ hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } }}
-                    key={acc.id}
+                    key={accessory.id}
                     className="group"
                   >
-                    <Link href={`/accessories/${acc.slug}`}>
+                    <Link href={`/accessories/${accessory.slug}`}>
                       <div className="relative aspect-[3/4] overflow-hidden bg-[#ebe8e3] mb-5 group-hover:shadow-lg transition-shadow duration-500">
                         <img 
                           src={imgUrl} 
-                          alt={acc.name} 
+                          alt={accessory.name} 
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
                       </div>
-                      <h3 className="font-heading text-lg text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-2 line-clamp-2">{acc.name}</h3>
+                      <h3 className="font-heading text-lg text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-2 line-clamp-2">{accessory.name}</h3>
                       <p className="font-sans text-[11px] text-[#b3b3b3] uppercase tracking-wider">{categoryName}</p>
                     </Link>
                   </motion.div>
@@ -239,7 +338,7 @@ export default function AccessoriesPage() {
             <div className="h-64 flex items-center justify-center border border-[#E5E5E5] bg-white rounded-lg">
               <div className="text-center">
                 <p className="font-heading text-2xl text-[#333] mb-2">No Accessories Found</p>
-                <p className="font-body text-[#7a7a7a] text-sm">Check back soon for our newest collection</p>
+                <p className="font-body text-[#7a7a7a] text-sm">No accessories match the selected style. Try a different filter.</p>
               </div>
             </div>
           )}

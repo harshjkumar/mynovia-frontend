@@ -77,7 +77,7 @@ export default function WelcomeSection({ data, dresses = [], accessories = [] })
               />
             ))}
             <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-between px-2">
-              <button onClick={prevLeft} className="w-8 h-8 rounded-full bg-white/80 flex justify-center items-center text-charcoal hover:bg-white">→</button>
+              <button onClick={prevLeft} className="w-8 h-8 rounded-full bg-white/80 flex justify-center items-center text-charcoal hover:bg-white">←</button>
               <button onClick={nextLeft} className="w-8 h-8 rounded-full bg-white/80 flex justify-center items-center text-charcoal hover:bg-white">→</button>
             </div>
           </motion.div>

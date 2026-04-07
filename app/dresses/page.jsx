@@ -7,6 +7,8 @@ import { fetchDresses, fetchCategories } from '@/lib/api'
 export default function DressesPage() {
   const [dresses, setDresses] = useState([])
   const [categories, setCategories] = useState([])
+  const [selectedStyle, setSelectedStyle] = useState(null)
+  const [availableStyles, setAvailableStyles] = useState([])
   
   // Default descriptions for categories
   const categoryDescriptions = {
@@ -17,7 +19,24 @@ export default function DressesPage() {
   }
   
   useEffect(() => {
-    fetchDresses().then(data => setDresses(data || [])).catch(() => setDresses([]))
+    fetchDresses().then(data => {
+      setDresses(data || [])
+      // Extract unique styles from dresses
+      if (data && Array.isArray(data)) {
+        const stylesMap = new Map()
+        data.forEach(dress => {
+          // Get variants with styles
+          if (Array.isArray(dress.variants)) {
+            dress.variants.forEach(variant => {
+              if (variant.dress_styles) {
+                stylesMap.set(variant.dress_styles.id, variant.dress_styles)
+              }
+            })
+          }
+        })
+        setAvailableStyles(Array.from(stylesMap.values()))
+      }
+    }).catch(() => setDresses([]))
     
     fetchCategories('dress').then(data => {
       if (data && Array.isArray(data)) {
@@ -34,6 +53,16 @@ export default function DressesPage() {
 
   // Use fetched categories, fallback to empty array
   const categoriesData = categories.length > 0 ? categories : []
+
+  // Filter dresses based on selected style
+  const filteredDresses = selectedStyle 
+    ? dresses.filter(dress => {
+        if (Array.isArray(dress.variants)) {
+          return dress.variants.some(variant => variant.dress_styles?.id === selectedStyle)
+        }
+        return false
+      })
+    : dresses
 
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
@@ -233,7 +262,43 @@ export default function DressesPage() {
             </p>
           </motion.div>
 
-          {dresses.length > 0 ? (
+          {/* Style Filter */}
+          {availableStyles.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="mb-12 flex flex-wrap gap-3 justify-center items-center"
+            >
+              <span className="text-sm font-sans font-semibold text-charcoal uppercase tracking-wide">Filter by Style:</span>
+              <button
+                onClick={() => setSelectedStyle(null)}
+                className={`text-sm font-sans px-4 py-2 border transition-all ${
+                  selectedStyle === null 
+                    ? 'border-gold bg-gold text-white' 
+                    : 'border-gray-300 text-body-gray hover:border-gold hover:text-charcoal'
+                }`}
+              >
+                All Styles
+              </button>
+              {availableStyles.map(style => (
+                <button
+                  key={style.id}
+                  onClick={() => setSelectedStyle(style.id)}
+                  className={`text-sm font-sans px-4 py-2 border transition-all ${
+                    selectedStyle === style.id 
+                      ? 'border-gold bg-gold text-white' 
+                      : 'border-gray-300 text-body-gray hover:border-gold hover:text-charcoal'
+                  }`}
+                >
+                  {style.name}
+                </button>
+              ))}
+            </motion.div>
+          )}
+
+          {filteredDresses.length > 0 ? (
             <motion.div 
               variants={{
                 hidden: {},
@@ -244,7 +309,7 @@ export default function DressesPage() {
               viewport={{ once: true, margin: "-10%" }}
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
             >
-              {dresses.map((dress) => {
+              {filteredDresses.map((dress) => {
                 const imgUrl = dress.dress_images?.sort((a,b)=>a.display_order-b.display_order)?.[0]?.image_url || 'https://images.unsplash.com/photo-1594463750939-ebb28c3f7f75?w=400&q=80';
                 const categoryName = dress.categories?.name || 'Dress';
                 return (
@@ -273,7 +338,7 @@ export default function DressesPage() {
             <div className="h-64 flex items-center justify-center border border-[#E5E5E5] bg-white rounded-lg">
               <div className="text-center">
                 <p className="font-heading text-2xl text-[#333] mb-2">No Dresses Found</p>
-                <p className="font-body text-[#7a7a7a] text-sm">Check back soon for our newest collection</p>
+                <p className="font-body text-[#7a7a7a] text-sm">No dresses match the selected style. Try a different filter.</p>
               </div>
             </div>
           )}

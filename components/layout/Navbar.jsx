@@ -47,19 +47,19 @@ export default function Navbar() {
           fetchCategories('dress').catch(() => null),
           fetchCategories('accessory').catch(() => null)
         ])
-        
+
         if (dCats && dCats.length > 0) {
           setDressCategories(
             dCats.map(c => ({ label: c.name, href: `/dresses/${c.slug}` }))
           )
         }
-        
+
         if (aCats && aCats.length > 0) {
           setAccCategories(
             aCats.map(c => ({ label: c.name, href: `/accessories/${c.slug}` }))
           )
         }
-      } catch (err) {}
+      } catch (err) { }
     }
     loadCats()
   }, [])
@@ -85,18 +85,23 @@ export default function Navbar() {
         <nav className="max-w-[1536px] mx-auto px-6">
           <div className="flex items-center justify-between h-[80px]">
             <div className="hidden lg:flex flex-1 items-center gap-8">
+              {/* OUR STORY Link */}
+              <Link href="/about" className={`text-[11px] font-sans font-medium tracking-[2.5px] uppercase transition-all duration-300 ${textColor} ${hoverColor}`}>
+                OUR STORY
+              </Link>
+
               {/* Dresses Dropdown */}
               <div
                 className="relative group h-full flex items-center"
                 onMouseEnter={() => setDressDropdownOpen(true)}
                 onMouseLeave={() => setDressDropdownOpen(false)}
               >
-                <button className={`text-[11px] font-sans font-medium tracking-[2.5px] uppercase transition-all duration-300 ${textColor} ${hoverColor} flex items-center gap-2 py-6`}>
+                <Link href="/dresses" className={`text-[11px] font-sans font-medium tracking-[2.5px] uppercase transition-all duration-300 ${textColor} ${hoverColor} flex items-center gap-2 py-6`}>
                   DRESSES
                   <svg className={`w-3 h-3 transition-transform duration-300 ${dressDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                   </svg>
-                </button>
+                </Link>
 
                 <div className={`absolute top-full left-0 mt-0 bg-white shadow-lg flex flex-col min-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2 border-t-2 border-gold`}>
                   {dressCategories.map((cat, idx) => (
@@ -118,12 +123,12 @@ export default function Navbar() {
                 onMouseEnter={() => setAccDropdownOpen(true)}
                 onMouseLeave={() => setAccDropdownOpen(false)}
               >
-                <button className={`text-[11px] font-sans font-medium tracking-[2.5px] uppercase transition-all duration-300 ${textColor} ${hoverColor} flex items-center gap-2 py-6`}>
+                <Link href="/accessories" className={`text-[11px] font-sans font-medium tracking-[2.5px] uppercase transition-all duration-300 ${textColor} ${hoverColor} flex items-center gap-2 py-6`}>
                   ACCESSORIES
                   <svg className={`w-3 h-3 transition-transform duration-300 ${accDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                   </svg>
-                </button>
+                </Link>
 
                 <div className={`absolute top-full left-0 mt-0 bg-white shadow-lg flex flex-col min-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 py-2 border-t-2 border-gold`}>
                   {accCategories.map((cat, idx) => (
@@ -141,13 +146,11 @@ export default function Navbar() {
             </div>
 
             <Link href="/" className="flex-shrink-0 text-center mx-4 group">
-              <h1 className={`font-heading text-[28px] lg:text-[34px] tracking-[4px] uppercase transition-colors duration-300 ${textColor} group-hover:opacity-80`}>
-                My Novia
-              </h1>
+              <img src="/image (1).png" alt="My Novia Logo" className="h-32 lg:h-48 object-contain filter drop-shadow-md brightness-75" />
             </Link>
 
             <div className="hidden lg:flex flex-1 items-center justify-end gap-8">
-              {navLinksRight.map(link => (
+              {navLinksRight.filter(link => link.label !== 'OUR STORY').map(link => (
                 <Link key={link.href} href={link.href} className={`text-[11px] font-sans font-medium tracking-[2.5px] uppercase transition-all duration-300 ${textColor} ${hoverColor}`}>
                   {link.label}
                 </Link>
@@ -161,9 +164,9 @@ export default function Navbar() {
             </div>
 
             <div className="lg:hidden flex items-center gap-4">
-               <Link href="/book-appointment" className={`px-4 py-2 text-[9px] font-sans font-semibold tracking-[1.5px] uppercase transition-all duration-300 ${isTransparent ? 'bg-white text-charcoal' : 'bg-charcoal text-white'}`}>
-                  BOOK
-                </Link>
+              <Link href="/book-appointment" className={`px-4 py-2 text-[9px] font-sans font-semibold tracking-[1.5px] uppercase transition-all duration-300 ${isTransparent ? 'bg-white text-charcoal' : 'bg-charcoal text-white'}`}>
+                BOOK
+              </Link>
               <button onClick={() => setMobileOpen(!mobileOpen)} className={`z-50 ${textColor}`} aria-label="Menu">
                 {mobileOpen ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M18 6L6 18M6 6l12 12" /></svg> : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 12h18M3 6h18M3 18h18" /></svg>}
               </button>
@@ -171,7 +174,7 @@ export default function Navbar() {
           </div>
         </nav>
       </header>
-      
+
       {!hasHero && <div className="h-[80px] bg-[#FAF9F6]" />}
 
       {mobileOpen && (
@@ -234,7 +237,7 @@ export default function Navbar() {
                 </div>
               )}
             </div>
-            
+
             {navLinksRight.map(link => (
               <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)} className="text-[13px] font-sans font-medium tracking-[3px] uppercase hover:text-gold transition-colors py-2 border-b border-gray-200">
                 {link.label}
