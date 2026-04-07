@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { adminGetAccessories, adminDeleteAccessory } from '@/lib/api'
+import HeroUploader from '@/components/admin/HeroUploader'
 
 export default function AdminAccessoriesPage() {
   const [accessories, setAccessories] = useState([])
@@ -36,6 +37,9 @@ export default function AdminAccessoriesPage() {
         <h1 className="text-2xl font-heading text-charcoal">Accessories</h1>
         <Link href="/admin/accesorios/nueva" className="btn-gold-filled text-[10px]">+ New Accessory</Link>
       </div>
+
+      {/* Hero Section Manager */}
+      <HeroUploader pageType="accessories" onUploadSuccess={loadAccessories} />
 
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">

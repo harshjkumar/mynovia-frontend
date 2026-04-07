@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { adminGetDresses, adminDeleteDress } from '@/lib/api'
+import HeroUploader from '@/components/admin/HeroUploader'
 
 export default function AdminDressesPage() {
   const [dresses, setDresses] = useState([])
@@ -41,6 +42,9 @@ export default function AdminDressesPage() {
         <h1 className="text-2xl font-heading text-charcoal">Dresses</h1>
         <Link href="/admin/vestidos/nueva" className="btn-gold-filled text-[10px]">+ New Dress</Link>
       </div>
+
+      {/* Hero Section Manager */}
+      <HeroUploader pageType="dresses" onUploadSuccess={loadDresses} />
 
       <div className="mb-6">
         <input
