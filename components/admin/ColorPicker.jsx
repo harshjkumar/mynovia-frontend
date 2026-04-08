@@ -229,12 +229,6 @@ export default function ColorPicker({ color, onChange }) {
             className="flex-1 px-3 py-2 border-2 border-gray-200 text-sm font-mono rounded focus:outline-none focus:border-gold"
             maxLength="7"
           />
-          <input
-            type="color"
-            value={hex}
-            onChange={handleColorInputChange}
-            className="w-14 h-14 p-1 border-2 border-gray-200 rounded cursor-pointer flex-shrink-0"
-          />
         </div>
       </div>
 
