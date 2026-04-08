@@ -368,18 +368,6 @@ export default function ColorPicker({ color, onChange }) {
               ))}
             </div>
           </div>
-
-          {/* Color Preview */}
-          <div className="pt-3 border-t border-gray-200 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-charcoal">Hex Code</span>
-              <span className="text-xs font-mono font-bold text-gold">{hex}</span>
-            </div>
-            <div
-              className="h-8 rounded-lg border-2 border-gray-200 shadow-md"
-              style={{ backgroundColor: hex }}
-            />
-          </div>
         </div>
       )}
     </div>
