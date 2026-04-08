@@ -58,9 +58,6 @@ export default function DressVariantSelector({ dress, variants }) {
   const [selectedStyle, setSelectedStyle] = useState(availableStyles[0]?.id || null)
   const [selectedSize, setSelectedSize] = useState(availableSizes[0]?.id || null)
   const [selectedColor, setSelectedColor] = useState(availableColors[0]?.id || null)
-  const [allStylesSelected, setAllStylesSelected] = useState(false)
-  const [allSizesSelected, setAllSizesSelected] = useState(false)
-  const [allColorsSelected, setAllColorsSelected] = useState(false)
 
   // Find exact matching variant
   const currentVariant = useMemo(() => {
@@ -90,31 +87,13 @@ export default function DressVariantSelector({ dress, variants }) {
         {/* Styles */}
         {availableStyles.length > 0 && (
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-sans font-semibold tracking-wider text-charcoal uppercase">Style</h3>
-              <button 
-                onClick={() => {
-                  setAllStylesSelected(!allStylesSelected)
-                  if (!allStylesSelected) {
-                    setSelectedStyle(null)
-                  } else {
-                    setSelectedStyle(availableStyles[0]?.id || null)
-                  }
-                }}
-                className="text-xs font-sans text-gold hover:text-charcoal transition-colors underline"
-              >
-                {allStylesSelected ? 'Clear All' : 'Select All'}
-              </button>
-            </div>
+            <h3 className="text-sm font-sans font-semibold tracking-wider text-charcoal uppercase mb-3">Style</h3>
             <div className="flex flex-wrap gap-2">
               {availableStyles.map(st => (
                 <button 
                   key={st.id} 
-                  onClick={() => {
-                    setSelectedStyle(st.id)
-                    setAllStylesSelected(false)
-                  }}
-                  className={`text-sm font-sans px-4 py-2 border transition-colors ${selectedStyle === st.id || !selectedStyle && allStylesSelected ? 'border-gold bg-gold text-white' : 'border-gray-300 text-body-gray hover:border-gold hover:text-charcoal'}`}
+                  onClick={() => setSelectedStyle(st.id)}
+                  className={`text-sm font-sans px-4 py-2 border transition-colors ${selectedStyle === st.id ? 'border-gold bg-gold text-white' : 'border-gray-300 text-body-gray hover:border-gold hover:text-charcoal'}`}
                 >
                   {st.name}
                 </button>
@@ -126,31 +105,13 @@ export default function DressVariantSelector({ dress, variants }) {
         {/* Sizes */}
         {availableSizes.length > 0 && (
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-sans font-semibold tracking-wider text-charcoal uppercase">Size</h3>
-              <button 
-                onClick={() => {
-                  setAllSizesSelected(!allSizesSelected)
-                  if (!allSizesSelected) {
-                    setSelectedSize(null)
-                  } else {
-                    setSelectedSize(availableSizes[0]?.id || null)
-                  }
-                }}
-                className="text-xs font-sans text-gold hover:text-charcoal transition-colors underline"
-              >
-                {allSizesSelected ? 'Clear All' : 'Select All'}
-              </button>
-            </div>
+            <h3 className="text-sm font-sans font-semibold tracking-wider text-charcoal uppercase mb-3">Size</h3>
             <div className="flex flex-wrap gap-2">
               {availableSizes.map(sz => (
                 <button 
                   key={sz.id} 
-                  onClick={() => {
-                    setSelectedSize(sz.id)
-                    setAllSizesSelected(false)
-                  }}
-                  className={`text-sm font-sans w-12 h-12 flex items-center justify-center border transition-colors ${selectedSize === sz.id || !selectedSize && allSizesSelected ? 'border-gold bg-gold text-white' : 'border-gray-300 text-body-gray hover:border-gold hover:text-charcoal'}`}
+                  onClick={() => setSelectedSize(sz.id)}
+                  className={`text-sm font-sans w-12 h-12 flex items-center justify-center border transition-colors ${selectedSize === sz.id ? 'border-gold bg-gold text-white' : 'border-gray-300 text-body-gray hover:border-gold hover:text-charcoal'}`}
                 >
                   {sz.name}
                 </button>
@@ -162,32 +123,14 @@ export default function DressVariantSelector({ dress, variants }) {
         {/* Colors */}
         {availableColors.length > 0 && (
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-sans font-semibold tracking-wider text-charcoal uppercase">Color</h3>
-              <button 
-                onClick={() => {
-                  setAllColorsSelected(!allColorsSelected)
-                  if (!allColorsSelected) {
-                    setSelectedColor(null)
-                  } else {
-                    setSelectedColor(availableColors[0]?.id || null)
-                  }
-                }}
-                className="text-xs font-sans text-gold hover:text-charcoal transition-colors underline"
-              >
-                {allColorsSelected ? 'Clear All' : 'Select All'}
-              </button>
-            </div>
+            <h3 className="text-sm font-sans font-semibold tracking-wider text-charcoal uppercase mb-3">Color</h3>
             <div className="flex flex-wrap gap-3">
               {availableColors.map(c => (
                 <button 
                   key={c.id} 
-                  onClick={() => {
-                    setSelectedColor(c.id)
-                    setAllColorsSelected(false)
-                  }}
+                  onClick={() => setSelectedColor(c.id)}
                   title={c.name}
-                  className={`w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center ${selectedColor === c.id || !selectedColor && allColorsSelected ? 'border-gold p-1' : 'border-transparent'}`}
+                  className={`w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center ${selectedColor === c.id ? 'border-gold p-1' : 'border-transparent'}`}
                 >
                   <span className="w-full h-full rounded-full border border-gray-200 block" style={{ backgroundColor: c.hex_code }}></span>
                 </button>

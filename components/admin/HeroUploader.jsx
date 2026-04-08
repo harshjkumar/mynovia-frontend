@@ -11,6 +11,9 @@ export default function HeroUploader({ pageType, onUploadSuccess }) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [isReplacing, setIsReplacing] = useState(false)
+  const [isEditingText, setIsEditingText] = useState(false)
+  const [editTitle, setEditTitle] = useState('')
+  const [editDescription, setEditDescription] = useState('')
 
   useEffect(() => {
     loadCurrentHero()
@@ -26,6 +29,37 @@ export default function HeroUploader({ pageType, onUploadSuccess }) {
       console.error('Failed to load current hero:', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const startEditingText = () => {
+    setEditTitle(currentHero?.title || '')
+    setEditDescription(currentHero?.description || '')
+    setIsEditingText(true)
+  }
+
+  const cancelEditingText = () => {
+    setEditTitle('')
+    setEditDescription('')
+    setIsEditingText(false)
+  }
+
+  const handleSaveText = async () => {
+    setSaving(true)
+    try {
+      await adminUpdatePageHero(pageType, {
+        title: editTitle,
+        description: editDescription
+      })
+      await loadCurrentHero()
+      setIsEditingText(false)
+      onUploadSuccess?.()
+    } catch (err) {
+      const errorMsg = err?.response?.data?.error || err?.message || 'Failed to save hero text'
+      setError(`Error: ${errorMsg}`)
+      console.error('Save hero text error:', err)
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -65,8 +99,9 @@ export default function HeroUploader({ pageType, onUploadSuccess }) {
       await loadCurrentHero()
       onUploadSuccess?.()
     } catch (err) {
-      setError('Failed to upload hero image')
-      console.error(err)
+      const errorMsg = err?.response?.data?.error || err?.message || 'Failed to upload hero image'
+      setError(`Error: ${errorMsg}`)
+      console.error('Upload hero image error:', err)
     } finally {
       setSaving(false)
     }
@@ -101,7 +136,7 @@ export default function HeroUploader({ pageType, onUploadSuccess }) {
       )}
 
       {/* Current Hero Display */}
-      {currentHero && !isReplacing ? (
+      {currentHero && !isReplacing && !isEditingText ? (
         <div className="mb-6">
           <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-3">Current Hero Image</label>
           <div className="relative w-full aspect-video bg-gray-100 overflow-hidden rounded border-2 border-gold/30">
@@ -113,22 +148,89 @@ export default function HeroUploader({ pageType, onUploadSuccess }) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
           
-          {currentHero.title && (
+          {(currentHero.title || currentHero.description) && (
             <div className="mt-3 p-3 bg-gray-50 rounded border border-gray-200">
-              <p className="text-xs font-sans text-charcoal font-semibold mb-1">{currentHero.title}</p>
+              {currentHero.title && (
+                <p className="text-xs font-sans text-charcoal font-semibold mb-1">{currentHero.title}</p>
+              )}
               {currentHero.description && (
                 <p className="text-xs text-body-gray">{currentHero.description}</p>
               )}
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={() => setIsReplacing(true)}
-            className="mt-4 w-full px-4 py-2.5 bg-gold text-white text-xs rounded font-sans font-semibold hover:bg-opacity-90 transition"
-          >
-            Replace Image
-          </button>
+          <div className="flex gap-2 mt-4">
+            <button
+              type="button"
+              onClick={() => setIsReplacing(true)}
+              className="flex-1 px-4 py-2.5 bg-gold text-white text-xs rounded font-sans font-semibold hover:bg-opacity-90 transition"
+            >
+              Replace Image
+            </button>
+            <button
+              type="button"
+              onClick={startEditingText}
+              className="flex-1 px-4 py-2.5 bg-charcoal text-white text-xs rounded font-sans font-semibold hover:bg-opacity-90 transition"
+            >
+              Edit Text
+            </button>
+          </div>
+        </div>
+      ) : null}
+
+      {/* Edit Text Mode */}
+      {isEditingText ? (
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <h3 className="text-sm font-heading text-charcoal mb-4">Edit Hero Section Text</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-sans font-semibold text-charcoal mb-2 uppercase">Hero Title</label>
+              <input
+                type="text"
+                value={editTitle}
+                onChange={e => setEditTitle(e.target.value)}
+                placeholder="e.g. Our Dresses"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded text-sm font-sans focus:outline-none focus:border-gold"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-sans font-semibold text-charcoal mb-2 uppercase">Hero Description</label>
+              <textarea
+                value={editDescription}
+                onChange={e => setEditDescription(e.target.value)}
+                placeholder="e.g. Discover our exclusive bridal collection"
+                rows={3}
+                className="w-full px-3 py-2.5 border border-gray-300 rounded text-sm font-sans focus:outline-none focus:border-gold resize-none"
+              />
+            </div>
+
+            <div className="p-3 bg-white border border-gray-200 rounded">
+              <p className="text-xs font-sans text-body-gray mb-2"><strong>Preview:</strong></p>
+              <p className="text-sm font-heading text-charcoal mb-2">{editTitle || '(No title)'}</p>
+              <p className="text-xs text-body-gray">{editDescription || '(No description)'}</p>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleSaveText}
+                disabled={saving}
+                className="flex-1 px-4 py-2.5 bg-green-600 text-white text-xs rounded font-sans font-semibold hover:bg-green-700 disabled:opacity-50 transition"
+              >
+                {saving ? 'Saving...' : 'Save Text'}
+              </button>
+              <button
+                type="button"
+                onClick={cancelEditingText}
+                disabled={saving}
+                className="flex-1 px-4 py-2.5 border border-gray-300 text-charcoal text-xs rounded font-sans font-semibold hover:bg-gray-50 disabled:opacity-50 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
       ) : null}
 
