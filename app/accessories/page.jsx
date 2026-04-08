@@ -137,9 +137,8 @@ export default function AccessoriesPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.9 }}
           >
-            <Link href="#collections" className="group inline-flex flex-col items-center gap-4 text-[11px] font-sans tracking-[3px] uppercase hover:text-gold transition-colors font-semibold" style={{ textShadow: '0 3px 10px rgba(0,0,0,0.8)' }}>
+            <Link href="#collections" className="group inline-flex items-center gap-4 text-[11px] font-sans tracking-[3px] uppercase hover:text-gold transition-colors font-semibold" style={{ textShadow: '0 3px 10px rgba(0,0,0,0.8)' }}>
               <span>Explore Collections</span>
-              <span className="w-[1px] h-12 bg-white group-hover:bg-gold transition-colors origin-top block animate-pulse"></span>
             </Link>
           </motion.div>
         </motion.div>
