@@ -65,11 +65,9 @@ export default function Navbar() {
   }, [])
 
   // Only apply transparent navbar on pages with dark hero sections
-  const isDressesMain = pathname === '/dresses'
-  const isAccessoriesMain = pathname === '/accessories'
-  const hasHero = isHome || isDressesMain || isAccessoriesMain
+  const hasHero = isHome
   const isTransparent = hasHero && !scrolled && !mobileOpen
-  const navBg = isTransparent ? 'bg-transparent' : 'bg-[#FAF9F6] shadow-sm'
+  const navBg = isTransparent ? 'bg-transparent' : 'bg-white shadow-sm'
   const textColor = isTransparent ? 'text-white' : 'text-charcoal'
   const hoverColor = isTransparent ? 'hover:text-white/70' : 'hover:text-gold'
 
@@ -145,8 +143,17 @@ export default function Navbar() {
               </div>
             </div>
 
-            <Link href="/" className="flex-shrink-0 text-center mx-4 group">
-              <img src="/image (1).png" alt="My Novia Logo" className="h-32 lg:h-48 object-contain filter drop-shadow-md brightness-75" />
+            <Link href="/" className="flex-shrink-0 text-center mx-4 group relative z-[60] block">
+              <img 
+                src="/logo.png" 
+                alt="My Novia" 
+                width={200}
+                className="h-24 lg:h-32 w-auto object-contain transition-all duration-500 group-hover:scale-105" 
+                style={{ 
+                  filter: isTransparent ? 'brightness(0) invert(1)' : 'contrast(1.1)',
+                  imageRendering: 'auto'
+                }} 
+              />
             </Link>
 
             <div className="hidden lg:flex flex-1 items-center justify-end gap-8">
@@ -175,7 +182,7 @@ export default function Navbar() {
         </nav>
       </header>
 
-      {!hasHero && <div className="h-[80px] bg-[#FAF9F6]" />}
+      {!hasHero && <div className="h-[80px] bg-white" />}
 
       {mobileOpen && (
         <div className="fixed inset-0 z-40 bg-[#FAF9F6] flex flex-col pt-32 px-8 lg:hidden animate-fade-in text-charcoal overflow-y-auto">

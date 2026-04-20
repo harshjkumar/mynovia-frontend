@@ -38,9 +38,6 @@ export default function AdminAccessoriesPage() {
         <Link href="/admin/accesorios/nueva" className="btn-gold-filled text-[10px]">+ New Accessory</Link>
       </div>
 
-      {/* Hero Section Manager */}
-      <HeroUploader pageType="accessories" onUploadSuccess={loadAccessories} />
-
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">

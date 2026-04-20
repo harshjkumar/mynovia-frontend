@@ -36,6 +36,7 @@ export default function EditDressPage() {
     name: '', description: '', category_id: '', price: '',
     inventory_count: 0, delivery_time_days: '',
     is_available: true, featured: false, is_published: false,
+    display_order: null,
     tags: []
   })
 
@@ -67,6 +68,7 @@ export default function EditDressPage() {
         is_available: dress.is_available ?? true,
         featured: dress.featured ?? false,
         is_published: dress.is_published ?? false,
+        display_order: dress.display_order || null,
         tags: (dress.dress_tags || []).map(dt => dt.tag_id)
       })
       setExistingImages((dress.dress_images || []).sort((a, b) => a.display_order - b.display_order))
@@ -285,19 +287,46 @@ export default function EditDressPage() {
               </div>
             )}
 
-            <div className="flex gap-6">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.is_available} onChange={e => update('is_available', e.target.checked)} className="accent-gold" />
-                <span className="text-sm font-sans text-charcoal">Available</span>
+            <div className="border-t border-gray-100 pt-6">
+              <p className="text-xs font-sans font-semibold text-charcoal uppercase tracking-wider mb-4">Visibility & Status</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <label className="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:border-gold transition-colors">
+                  <input type="checkbox" checked={form.is_available} onChange={e => update('is_available', e.target.checked)} className="accent-gold mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="text-sm font-sans font-medium text-charcoal block">Available</span>
+                    <span className="text-[11px] font-sans text-body-gray">Shows "In Stock" badge on the dress. Uncheck for "On Request".</span>
+                  </div>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:border-gold transition-colors">
+                  <input type="checkbox" checked={form.featured} onChange={e => update('featured', e.target.checked)} className="accent-gold mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="text-sm font-sans font-medium text-charcoal block">Featured</span>
+                    <span className="text-[11px] font-sans text-body-gray">Shows dress on the homepage Featured section carousel.</span>
+                  </div>
+                </label>
+                <label className="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:border-gold transition-colors">
+                  <input type="checkbox" checked={form.is_published} onChange={e => update('is_published', e.target.checked)} className="accent-gold mt-0.5 flex-shrink-0" />
+                  <div>
+                    <span className="text-sm font-sans font-medium text-charcoal block">Publish</span>
+                    <span className="text-[11px] font-sans text-body-gray">Makes the dress visible on the public website. Unpublished = Draft (hidden).</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100 pt-6">
+              <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">
+                Display Order
+                <span className="ml-2 font-normal normal-case text-body-gray">(Lower number = appears first in lists)</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.featured} onChange={e => update('featured', e.target.checked)} className="accent-gold" />
-                <span className="text-sm font-sans text-charcoal">Featured</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.is_published} onChange={e => update('is_published', e.target.checked)} className="accent-gold" />
-                <span className="text-sm font-sans text-charcoal">Publish</span>
-              </label>
+              <input
+                type="number"
+                min="1"
+                value={form.display_order || ''}
+                placeholder="Leave blank for default order"
+                onChange={e => update('display_order', e.target.value ? parseInt(e.target.value) : null)}
+                className="w-48 px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold"
+              />
             </div>
           </div>
         </div>

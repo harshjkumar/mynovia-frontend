@@ -49,8 +49,8 @@ export default function DressCard({ dress }) {
         </p>
         
         {dress.categories && (
-          <p className="text-[12px] text-[#b3b3b3] font-serif italic">
-            {dress.categories.name} Wedding Dresses
+          <p className="text-[11px] text-[#b3b3b3] font-sans uppercase tracking-[2px]">
+            {dress.categories.name}
           </p>
         )}
       </div>

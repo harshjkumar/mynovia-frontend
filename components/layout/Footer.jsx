@@ -19,13 +19,18 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           <div>
             <h4 className="font-sans text-[10px] font-semibold tracking-[2px] uppercase text-charcoal/80 mb-6">
-              Our Brands
+              Our Collections
             </h4>
             <ul className="space-y-4">
-              {['My Novia', 'Wilderly', 'Bridgerton Collection', 'Fairy Tale Weddings'].map(br => (
-                <li key={br}>
-                  <Link href="#" className="text-[13px] text-body-gray hover:text-charcoal transition-colors font-body">
-                    {br}
+              {[
+                { name: 'Bride', href: '/dresses/bride' },
+                { name: 'Party', href: '/dresses/party' },
+                { name: 'Godmother', href: '/dresses/godmother' },
+                { name: 'Cocktail', href: '/dresses/cocktail' }
+              ].map(cat => (
+                <li key={cat.name}>
+                  <Link href={cat.href} className="text-[13px] text-body-gray hover:text-charcoal transition-colors font-body">
+                    {cat.name}
                   </Link>
                 </li>
               ))}

@@ -9,7 +9,6 @@ export default function AccessoriesPage() {
   const [categories, setCategories] = useState([])
   const [selectedStyle, setSelectedStyle] = useState(null)
   const [availableStyles, setAvailableStyles] = useState([])
-  const [heroData, setHeroData] = useState({ image_url: null, title: 'Our Accessories', description: 'Exquisite accessories to complete your bridal look' })
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   
   // Default descriptions for categories
@@ -23,11 +22,7 @@ export default function AccessoriesPage() {
   }
   
   useEffect(() => {
-    // Load hero data
-    getPageHero('accessories').then(data => {
-      if (data?.image_url) setHeroData(data)
-    }).catch(() => {})
-
+    // Load data
     fetchAccessories().then(data => {
       setAccessories(data || [])
       // Extract unique styles from accessories
@@ -73,82 +68,25 @@ export default function AccessoriesPage() {
       })
     : accessories
 
-  const heroRef = useRef(null)
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
-  const yBg = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
-  const opacityText = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-
   return (
     <div className="bg-[#FAF9F6] min-h-screen overflow-hidden">
-      {/* Redesigned Hero Section */}
-      <section ref={heroRef} className="relative w-full h-screen min-h-[700px] overflow-hidden bg-charcoal">
-        <motion.div style={{ y: yBg }} className="absolute inset-0 z-0">
-          <motion.img
-            initial={{ scale: 1.1, opacity: 0 }}
-            animate={{ scale: 1, opacity: 0.85 }}
-            transition={{ duration: 2.5, ease: "easeOut" }}
-            src={heroData.image_url || "/images/accessories_hero.png"}
-            alt={heroData.title}
-            className="w-full h-full object-cover"
-          />
-          {/* Gradient overlay with gold accent */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/30" />
-          {/* Gold accent bar */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-60" />
-        </motion.div>
-
-        <motion.div 
-          style={{ opacity: opacityText }}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-          className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6 w-full max-w-5xl mx-auto"
-        >
-          <motion.span 
-            initial={{ opacity: 0, letterSpacing: '0.3em' }}
-            animate={{ opacity: 1, letterSpacing: '0.6em' }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="text-[11px] font-sans tracking-[6px] uppercase block mb-6 font-semibold text-gold drop-shadow-lg"
-          >
-            COLLECTION
-          </motion.span>
-          
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
-            className="font-heading text-6xl md:text-7xl lg:text-8xl font-light mb-8 tracking-wide drop-shadow-lg"
-            style={{ textShadow: '0 8px 30px rgba(0,0,0,0.9)' }}
-          >
-            {heroData.title || 'Our Accessories'}
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="text-white/90 font-body text-base md:text-lg max-w-2xl mb-10 drop-shadow-lg"
-          >
-            {heroData.description}
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-          >
-            <Link href="#collections" className="group inline-flex items-center gap-4 text-[11px] font-sans tracking-[3px] uppercase hover:text-gold transition-colors font-semibold" style={{ textShadow: '0 3px 10px rgba(0,0,0,0.8)' }}>
-              <span>Explore Collections</span>
-            </Link>
-          </motion.div>
-        </motion.div>
-      </section>
+      {/* Header and Breadcrumbs */}
+      <div className="max-w-[1600px] mx-auto px-6 md:px-12 text-center pt-32 mb-8">
+        <div className="flex items-center justify-center text-[11px] font-sans tracking-[1px] text-[#7A7A7A] mb-4">
+          <Link href="/" className="hover:text-charcoal transition-colors underline decoration-transparent hover:decoration-currentColor underline-offset-4">Home</Link>
+          <span className="mx-2">/</span>
+          <span className="text-[#a09e9e]">Accessories</span>
+        </div>
+        <h1 className="font-heading text-4xl md:text-5xl lg:text-[56px] text-[#333333] font-light tracking-wide">
+          Our Accessories
+        </h1>
+      </div>
 
       {/* Main Content Area */}
       <div id="collections" className="bg-[#FAF9F6] relative z-20">
         
         {/* Categories Grid Header */}
-        <section className="pt-24 pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
+        <section className="pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
           <h2 className="font-heading text-4xl lg:text-5xl text-[#333] mb-4 font-light">Shop by Category</h2>
           <p className="font-body text-[#7a7a7a] text-sm max-w-xl mx-auto mb-16">
             Explore our curated collections of exquisite accessories to complement your bridal look.

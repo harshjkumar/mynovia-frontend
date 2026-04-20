@@ -40,19 +40,17 @@ export default function FeaturedDresses({ data, dresses = [] }) {
   return (
     <section ref={sectionRef} className="py-16 md:py-24 bg-[#FAF9F6] overflow-hidden">
       <div className="max-w-[1600px] mx-auto px-6 md:px-12">
-        <motion.div style={{ opacity, y: yText }} className="flex items-end justify-between mb-8 pb-4 border-b border-gray-100">
-          <div>
-            <span className="text-[10px] font-sans tracking-[3px] text-body-gray uppercase mb-3 block">
-              {content.eyebrow || 'MY NOVIA BRIDAL'}
-            </span>
-            <h2 className="font-heading text-4xl font-light text-charcoal mb-3">
-              {content.heading || 'Effortlessly Elegant'}
-            </h2>
-            <p className="font-body text-body-gray text-sm leading-relaxed max-w-lg">
-              {content.subtext || 'Discover the artistry of your perfect wedding dress from one of the most beloved bridal collections.'}
-            </p>
-          </div>
-          <Link href="/dresses" className="text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:text-gold transition-colors border-b border-transparent hover:border-gold pb-1 whitespace-nowrap ml-4 shrink-0">
+        <motion.div style={{ opacity, y: yText }} className="text-center mb-12 pb-4 border-b border-gray-100">
+          <span className="text-[10px] font-sans tracking-[3px] text-body-gray uppercase mb-3 block">
+            {content.eyebrow || 'MY NOVIA BRIDAL'}
+          </span>
+          <h2 className="font-heading text-4xl font-light text-charcoal mb-3">
+            {content.heading || 'Effortlessly Elegant'}
+          </h2>
+          <p className="font-body text-body-gray text-sm leading-relaxed max-w-lg mx-auto mb-4">
+            {content.subtext || 'Discover the artistry of your perfect wedding dress from one of the most beloved bridal collections.'}
+          </p>
+          <Link href="/dresses" className="text-[11px] font-sans font-medium tracking-[2px] uppercase text-charcoal hover:text-gold transition-colors border-b border-transparent hover:border-gold pb-1 inline-block">
             VIEW ALL
           </Link>
         </motion.div>
