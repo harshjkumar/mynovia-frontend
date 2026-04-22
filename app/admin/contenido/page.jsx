@@ -2,6 +2,10 @@
 import { useState, useEffect } from 'react'
 import { fetchPageContent, fetchSections, adminUpdateContent, adminUpdateSection, adminUploadMedia } from '@/lib/api'
 import LoadingOverlay from '@/components/admin/LoadingOverlay'
+import dynamic from 'next/dynamic'
+import 'react-quill/dist/quill.snow.css'
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false })
 
 export default function ContentEditorPage() {
   const [activeTab, setActiveTab] = useState('home')
@@ -85,6 +89,18 @@ export default function ContentEditorPage() {
           hours: 'Monday - Friday: 10:00 - 14:00, 17:00 - 20:30\nSaturday: 10:00 - 14:00\nSunday: Closed',
           map_embed_url: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3186.8!2d-2.46!3d36.84!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzbCsDUwJzI0LjAiTiAywrAyNyczNi4wIlc!5e0!3m2!1sen!2ses!4v1',
           ...map.contact
+        },
+        privacy: {
+          content: '',
+          ...map.privacy
+        },
+        terms: {
+          content: '',
+          ...map.terms
+        },
+        cookies: {
+          content: '',
+          ...map.cookies
         }
       })
     }).catch(err => console.error('Error fetching sections:', err))
@@ -173,7 +189,10 @@ export default function ContentEditorPage() {
   const tabs = [
     { id: 'home', label: 'Homepage' },
     { id: 'about', label: 'Our Story' },
-    { id: 'contact', label: 'Contact' }
+    { id: 'contact', label: 'Contact' },
+    { id: 'privacy', label: 'Privacy Policy' },
+    { id: 'terms', label: 'Terms of Service' },
+    { id: 'cookies', label: 'Cookies Policy' }
   ]
 
   return (
@@ -477,6 +496,29 @@ export default function ContentEditorPage() {
             <div><label className="block text-xs font-sans text-body-gray mb-2">Google Maps Embed URL</label><textarea rows={3} value={sections.contact?.map_embed_url || ''} onChange={e => updateSection('contact', 'map_embed_url', e.target.value)} className="w-full px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold resize-y" /><p className="text-[10px] text-body-gray mt-1">Example: https://www.google.com/maps/embed?pb=...</p></div>
           </div>
           <button onClick={() => saveSection('contact')} disabled={savingSection !== null || uploadingImage} className="btn-gold text-[10px] mt-4">{savingSection === 'contact' ? 'SAVING...' : 'SAVE CONTACT CHANGES'}</button>
+        </div>
+      )}
+
+      {['privacy', 'terms', 'cookies'].includes(activeTab) && (
+        <div className="bg-white p-6 rounded-lg border border-gray-200 space-y-4">
+          <h3 className="font-sans text-sm font-semibold text-charcoal mb-4">
+            {activeTab === 'privacy' ? 'Privacy Policy' : activeTab === 'terms' ? 'Terms of Service' : 'Cookies Policy'} Content
+          </h3>
+          <div className="bg-white">
+            <ReactQuill 
+              theme="snow" 
+              value={sections[activeTab]?.content || ''} 
+              onChange={(value) => updateSection(activeTab, 'content', value)} 
+              className="h-96 mb-12"
+            />
+          </div>
+          <button 
+            onClick={() => saveSection(activeTab)} 
+            disabled={savingSection !== null} 
+            className="btn-gold text-[10px] mt-4"
+          >
+            {savingSection === activeTab ? 'SAVING...' : 'SAVE CHANGES'}
+          </button>
         </div>
       )}
     </div>

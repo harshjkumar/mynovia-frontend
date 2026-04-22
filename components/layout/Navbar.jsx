@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { fetchCategories } from '@/lib/api'
+import { fetchCategories, fetchSections } from '@/lib/api'
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -43,20 +43,40 @@ export default function Navbar() {
   useEffect(() => {
     const loadCats = async () => {
       try {
-        const [dCats, aCats] = await Promise.all([
+        const [dCats, aCats, sections] = await Promise.all([
           fetchCategories('dress').catch(() => null),
-          fetchCategories('accessory').catch(() => null)
+          fetchCategories('accessory').catch(() => null),
+          fetchSections().catch(() => [])
         ])
 
+        const orderSection = sections?.find(s => s.section_name === 'categories_order')
+        const orderMap = orderSection?.content || { dress: [], accessory: [] }
+
         if (dCats && dCats.length > 0) {
+          const sortedDCats = [...dCats].sort((a, b) => {
+            const idxA = orderMap.dress?.indexOf(a.slug) ?? -1
+            const idxB = orderMap.dress?.indexOf(b.slug) ?? -1
+            if (idxA === -1 && idxB === -1) return 0
+            if (idxA === -1) return 1
+            if (idxB === -1) return -1
+            return idxA - idxB
+          })
           setDressCategories(
-            dCats.map(c => ({ label: c.name, href: `/dresses/${c.slug}` }))
+            sortedDCats.map(c => ({ label: c.name, href: `/dresses/${c.slug}` }))
           )
         }
 
         if (aCats && aCats.length > 0) {
+          const sortedACats = [...aCats].sort((a, b) => {
+            const idxA = orderMap.accessory?.indexOf(a.slug) ?? -1
+            const idxB = orderMap.accessory?.indexOf(b.slug) ?? -1
+            if (idxA === -1 && idxB === -1) return 0
+            if (idxA === -1) return 1
+            if (idxB === -1) return -1
+            return idxA - idxB
+          })
           setAccCategories(
-            aCats.map(c => ({ label: c.name, href: `/accessories/${c.slug}` }))
+            sortedACats.map(c => ({ label: c.name, href: `/accessories/${c.slug}` }))
           )
         }
       } catch (err) { }
@@ -67,7 +87,7 @@ export default function Navbar() {
   // Only apply transparent navbar on pages with dark hero sections
   const hasHero = isHome
   const isTransparent = hasHero && !scrolled && !mobileOpen
-  const navBg = isTransparent ? 'bg-transparent' : 'bg-white shadow-sm'
+  const navBg = isTransparent ? 'bg-gradient-to-b from-black/60 to-transparent' : 'bg-white shadow-sm'
   const textColor = isTransparent ? 'text-white' : 'text-charcoal'
   const hoverColor = isTransparent ? 'hover:text-white/70' : 'hover:text-gold'
 
@@ -81,7 +101,7 @@ export default function Navbar() {
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${navBg}`}>
         <nav className="max-w-[1536px] mx-auto px-6">
-          <div className="flex items-center justify-between h-[80px]">
+          <div className={`flex items-center justify-between transition-all duration-500 ${isTransparent ? 'h-[120px] lg:h-[160px]' : 'h-[80px]'}`}>
             <div className="hidden lg:flex flex-1 items-center gap-8">
               {/* OUR STORY Link */}
               <Link href="/about" className={`text-[11px] font-sans font-medium tracking-[2.5px] uppercase transition-all duration-300 ${textColor} ${hoverColor}`}>
@@ -143,15 +163,18 @@ export default function Navbar() {
               </div>
             </div>
 
-            <Link href="/" className="flex-shrink-0 text-center mx-4 group relative z-[60] block">
+            <Link href="/" className="flex-shrink-0 text-center mx-4 group relative z-[60] flex items-center justify-center w-[120px] lg:w-[240px] h-full">
               <img 
                 src="/logo.png" 
                 alt="My Novia" 
-                width={200}
-                className="h-24 lg:h-32 w-auto object-contain transition-all duration-500 group-hover:scale-105" 
+                className={`absolute w-auto object-contain transition-all duration-700 ease-in-out group-hover:scale-105 ${
+                  isTransparent ? 'h-32 md:h-48 lg:h-[220px] top-0' : 'h-24 md:h-32 lg:h-[130px] top-1/2 -translate-y-1/2'
+                }`} 
                 style={{ 
-                  filter: isTransparent ? 'brightness(0) invert(1)' : 'contrast(1.1)',
-                  imageRendering: 'auto'
+                  filter: isTransparent 
+                    ? 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' 
+                    : 'drop-shadow(0px 1px 1px rgba(0,0,0,0.8)) drop-shadow(0px 0px 4px rgba(0,0,0,0.3))',
+                  imageRendering: '-webkit-optimize-contrast'
                 }} 
               />
             </Link>

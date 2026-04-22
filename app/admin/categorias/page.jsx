@@ -1,12 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { fetchCategories, adminUpdateCategory, adminCreateCategory, adminDeleteCategory } from '@/lib/api'
+import { fetchCategories, adminUpdateCategory, adminCreateCategory, adminDeleteCategory, fetchSections, adminUpdateSection } from '@/lib/api'
 import { useRouter } from 'next/navigation'
 import ImageUploader from '@/components/admin/ImageUploader'
 
 export default function CategoriesPage() {
   const router = useRouter()
   const [categories, setCategories] = useState([])
+  const [orderMap, setOrderMap] = useState({ dress: [], accessory: [] })
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('dress')
   
@@ -25,8 +26,36 @@ export default function CategoriesPage() {
   const loadCategories = async () => {
     try {
       setLoading(true)
-      const data = await fetchCategories(activeTab)
-      setCategories(data || [])
+      const [catsData, sectionsData] = await Promise.all([
+        fetchCategories(activeTab),
+        fetchSections().catch(() => [])
+      ])
+      
+      const orderSection = sectionsData?.find(s => s.section_name === 'categories_order')
+      const currentOrder = orderSection?.content?.[activeTab] || []
+      
+      if (orderSection?.content) {
+        setOrderMap({
+           dress: orderSection.content.dress || [],
+           accessory: orderSection.content.accessory || []
+        })
+      }
+
+      let data = catsData || []
+      
+      // Sort based on currentOrder array of slugs
+      if (currentOrder.length > 0) {
+        data.sort((a, b) => {
+          const idxA = currentOrder.indexOf(a.slug)
+          const idxB = currentOrder.indexOf(b.slug)
+          if (idxA === -1 && idxB === -1) return 0
+          if (idxA === -1) return 1
+          if (idxB === -1) return -1
+          return idxA - idxB
+        })
+      }
+      
+      setCategories(data)
     } catch (err) {
       console.error('Error loading categories:', err)
     } finally {
@@ -109,6 +138,35 @@ export default function CategoriesPage() {
     setNewImage(null)
   }
 
+  const moveCategory = (index, direction) => {
+    if (direction === 'up' && index === 0) return
+    if (direction === 'down' && index === categories.length - 1) return
+    
+    const newCats = [...categories]
+    const temp = newCats[index]
+    newCats[index] = newCats[index + (direction === 'up' ? -1 : 1)]
+    newCats[index + (direction === 'up' ? -1 : 1)] = temp
+    setCategories(newCats)
+  }
+
+  const saveOrder = async () => {
+    try {
+      setSaving(true)
+      const newOrderMap = {
+        ...orderMap,
+        [activeTab]: categories.map(c => c.slug)
+      }
+      await adminUpdateSection('categories_order', newOrderMap)
+      setOrderMap(newOrderMap)
+      setSavedMessage('Order saved successfully!')
+      setTimeout(() => setSavedMessage(''), 3000)
+    } catch (err) {
+      alert('Error saving order: ' + err.message)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-8">
@@ -143,6 +201,13 @@ export default function CategoriesPage() {
           }`}
         >
           Accessories
+        </button>
+      </div>
+
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="font-sans text-sm text-charcoal">Use the arrows to reorder categories, then click Save Order.</h2>
+        <button onClick={saveOrder} disabled={saving || categories.length === 0} className="btn-gold disabled:opacity-50 text-[10px]">
+          SAVE ORDER
         </button>
       </div>
 
@@ -220,8 +285,12 @@ export default function CategoriesPage() {
             </div>
           )}
 
-          {categories.map(category => (
+          {categories.map((category, index) => (
             <div key={category.id} className="bg-white border border-gray-100 p-6 shadow-sm flex items-center justify-between gap-6">
+              <div className="flex flex-col gap-1 pr-4 border-r border-gray-100">
+                <button onClick={() => moveCategory(index, 'up')} disabled={index === 0} className="text-gray-400 hover:text-gold disabled:opacity-30">▲</button>
+                <button onClick={() => moveCategory(index, 'down')} disabled={index === categories.length - 1} className="text-gray-400 hover:text-gold disabled:opacity-30">▼</button>
+              </div>
               <div className="flex items-center gap-6 flex-1">
                 <div className="w-24 h-24 bg-cream flex-shrink-0 overflow-hidden border border-gray-100">
                   {category.image_url ? (

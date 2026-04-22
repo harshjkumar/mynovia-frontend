@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
-import { fetchAccessories, fetchCategories, getPageHero } from '@/lib/api'
+import { fetchAccessories, fetchCategories, getPageHero, fetchSections } from '@/lib/api'
 
 export default function AccessoriesPage() {
   const [accessories, setAccessories] = useState([])
@@ -41,15 +41,31 @@ export default function AccessoriesPage() {
         setAvailableStyles(Array.from(stylesMap.values()))
       }
     }).catch(() => setAccessories([]))
-    
-    fetchCategories('accessory').then(data => {
-      if (data && Array.isArray(data)) {
-        const enrichedCategories = data
+    Promise.all([
+      fetchCategories('accessory').catch(() => []),
+      fetchSections().catch(() => [])
+    ]).then(([catsData, sectionsData]) => {
+      const orderSection = sectionsData?.find(s => s.section_name === 'categories_order')
+      const currentOrder = orderSection?.content?.accessory || []
+
+      if (catsData && Array.isArray(catsData)) {
+        let enrichedCategories = catsData
           .map(cat => ({
             ...cat,
             title: cat.name,
             description: categoryDescriptions[cat.slug] || cat.description || `Discover our exclusive ${cat.name} collection.`
           }))
+          
+        if (currentOrder.length > 0) {
+          enrichedCategories.sort((a, b) => {
+            const idxA = currentOrder.indexOf(a.slug)
+            const idxB = currentOrder.indexOf(b.slug)
+            if (idxA === -1 && idxB === -1) return 0
+            if (idxA === -1) return 1
+            if (idxB === -1) return -1
+            return idxA - idxB
+          })
+        }
         setCategories(enrichedCategories)
       }
     }).catch(() => setCategories([]))
@@ -70,23 +86,11 @@ export default function AccessoriesPage() {
 
   return (
     <div className="bg-[#FAF9F6] min-h-screen overflow-hidden">
-      {/* Header and Breadcrumbs */}
-      <div className="max-w-[1600px] mx-auto px-6 md:px-12 text-center pt-32 mb-8">
-        <div className="flex items-center justify-center text-[11px] font-sans tracking-[1px] text-[#7A7A7A] mb-4">
-          <Link href="/" className="hover:text-charcoal transition-colors underline decoration-transparent hover:decoration-currentColor underline-offset-4">Home</Link>
-          <span className="mx-2">/</span>
-          <span className="text-[#a09e9e]">Accessories</span>
-        </div>
-        <h1 className="font-heading text-4xl md:text-5xl lg:text-[56px] text-[#333333] font-light tracking-wide">
-          Our Accessories
-        </h1>
-      </div>
-
       {/* Main Content Area */}
       <div id="collections" className="bg-[#FAF9F6] relative z-20">
         
         {/* Categories Grid Header */}
-        <section className="pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
+        <section className="pt-24 pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
           <h2 className="font-heading text-4xl lg:text-5xl text-[#333] mb-4 font-light">Shop by Category</h2>
           <p className="font-body text-[#7a7a7a] text-sm max-w-xl mx-auto mb-16">
             Explore our curated collections of exquisite accessories to complement your bridal look.
