@@ -42,20 +42,46 @@ export default function AdminDressesPage() {
   }
 
   async function handleOrderChange(dress, newOrder) {
+    const parsedOrder = parseInt(newOrder) || null
+    if (parsedOrder === dress.display_order) return
     setSavingOrder(dress.id)
     try {
-      await adminUpdateDress(dress.id, { display_order: parseInt(newOrder) || null })
-      setDresses(prev =>
-        prev.map(d => d.id === dress.id ? { ...d, display_order: parseInt(newOrder) || null } : d)
-          .sort((a, b) => {
-            if (a.display_order == null && b.display_order == null) return 0
-            if (a.display_order == null) return 1
-            if (b.display_order == null) return -1
-            return a.display_order - b.display_order
-          })
-      )
+      // Check if another dress already has this order number
+      if (parsedOrder !== null) {
+        const conflict = dresses.find(d => d.id !== dress.id && d.display_order === parsedOrder)
+        if (conflict) {
+          // Swap: give the conflicting dress the old order number
+          const oldOrder = dress.display_order || null
+          await adminUpdateDress(conflict.id, { display_order: oldOrder })
+          await adminUpdateDress(dress.id, { display_order: parsedOrder })
+          setDresses(prev =>
+            prev.map(d => {
+              if (d.id === dress.id) return { ...d, display_order: parsedOrder }
+              if (d.id === conflict.id) return { ...d, display_order: oldOrder }
+              return d
+            }).sort(sortByOrder)
+          )
+        } else {
+          await adminUpdateDress(dress.id, { display_order: parsedOrder })
+          setDresses(prev =>
+            prev.map(d => d.id === dress.id ? { ...d, display_order: parsedOrder } : d).sort(sortByOrder)
+          )
+        }
+      } else {
+        await adminUpdateDress(dress.id, { display_order: null })
+        setDresses(prev =>
+          prev.map(d => d.id === dress.id ? { ...d, display_order: null } : d).sort(sortByOrder)
+        )
+      }
     } catch (err) { alert('Error saving order') }
     setSavingOrder(null)
+  }
+
+  function sortByOrder(a, b) {
+    if (a.display_order == null && b.display_order == null) return 0
+    if (a.display_order == null) return 1
+    if (b.display_order == null) return -1
+    return a.display_order - b.display_order
   }
 
   const filtered = dresses.filter(d => {
@@ -160,7 +186,7 @@ export default function AdminDressesPage() {
         </table>
       </div>
       <p className="text-[10px] text-body-gray font-sans mt-3">
-        💡 Set the <strong>Order</strong> number to control the sequence (1 = first). Click outside the box to save. Leave blank to sort by newest.
+        💡 Set the <strong>Order</strong> number to control the sequence (1 = first). Click outside the box to save. Leave blank to sort by newest. Numbers auto-swap if duplicated.
       </p>
     </div>
   )
