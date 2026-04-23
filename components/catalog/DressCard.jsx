@@ -48,11 +48,6 @@ export default function DressCard({ dress }) {
           {dress.description || "Elegant and timeless, this beautiful gown features meticulous craftsmanship and premium fabrics designed to make your special day unforgettable. With delicate lace appliques, hand-beaded details, and a flowing skirt, it moves gracefully with every step."}
         </p>
         
-        {dress.categories && (
-          <p className="text-[11px] text-[#b3b3b3] font-sans uppercase tracking-[2px]">
-            {dress.categories.name}
-          </p>
-        )}
       </div>
     </div>
   )

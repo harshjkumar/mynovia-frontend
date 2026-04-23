@@ -32,6 +32,7 @@ export default function NewDressPage() {
     name: '', description: '', category_id: '', price: '',
     inventory_count: 0, delivery_time_days: '',
     is_available: true, featured: false, is_published: false,
+    display_order: null,
     tags: []
   })
 
@@ -209,10 +210,6 @@ export default function NewDressPage() {
 
             <div className="flex gap-6">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.is_available} onChange={e => update('is_available', e.target.checked)} className="accent-gold" />
-                <span className="text-sm font-sans text-charcoal">Available</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={form.featured} onChange={e => update('featured', e.target.checked)} className="accent-gold" />
                 <span className="text-sm font-sans text-charcoal">Featured</span>
               </label>
@@ -220,6 +217,21 @@ export default function NewDressPage() {
                 <input type="checkbox" checked={form.is_published} onChange={e => update('is_published', e.target.checked)} className="accent-gold" />
                 <span className="text-sm font-sans text-charcoal">Publish</span>
               </label>
+            </div>
+
+            <div className="border-t border-gray-100 pt-6">
+              <label className="block text-xs font-sans font-semibold tracking-wider text-charcoal uppercase mb-2">
+                Display Order
+                <span className="ml-2 font-normal normal-case text-body-gray">(Lower number = appears first in lists)</span>
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={form.display_order || ''}
+                placeholder="Leave blank for default order"
+                onChange={e => update('display_order', e.target.value ? parseInt(e.target.value) : null)}
+                className="w-48 px-4 py-2.5 border border-gray-200 bg-white font-sans text-sm focus:outline-none focus:border-gold"
+              />
             </div>
           </div>
         </div>

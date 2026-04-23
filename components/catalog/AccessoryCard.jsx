@@ -31,15 +31,6 @@ export default function AccessoryCard({ accessory }) {
         <h3 className="font-heading text-lg text-charcoal group-hover:text-gold transition-colors duration-300">
           {accessory.name}
         </h3>
-        {accessory.categories && (
-          <motion.p
-            initial={{ opacity: 0.7 }}
-            whileHover={{ opacity: 1 }}
-            className="text-xs text-body-gray font-sans mt-1 tracking-wide uppercase"
-          >
-            {accessory.categories.name}
-          </motion.p>
-        )}
         {accessory.description && (
           <p className="text-sm text-body-gray font-body mt-2 line-clamp-2">
             {accessory.description}

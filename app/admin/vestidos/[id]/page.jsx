@@ -289,14 +289,7 @@ export default function EditDressPage() {
 
             <div className="border-t border-gray-100 pt-6">
               <p className="text-xs font-sans font-semibold text-charcoal uppercase tracking-wider mb-4">Visibility & Status</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <label className="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:border-gold transition-colors">
-                  <input type="checkbox" checked={form.is_available} onChange={e => update('is_available', e.target.checked)} className="accent-gold mt-0.5 flex-shrink-0" />
-                  <div>
-                    <span className="text-sm font-sans font-medium text-charcoal block">Available</span>
-                    <span className="text-[11px] font-sans text-body-gray">Shows "In Stock" badge on the dress. Uncheck for "On Request".</span>
-                  </div>
-                </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label className="flex items-start gap-3 cursor-pointer p-3 border border-gray-200 rounded-lg hover:border-gold transition-colors">
                   <input type="checkbox" checked={form.featured} onChange={e => update('featured', e.target.checked)} className="accent-gold mt-0.5 flex-shrink-0" />
                   <div>

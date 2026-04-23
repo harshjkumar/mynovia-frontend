@@ -46,34 +46,13 @@ export default function AdminDressesPage() {
     if (parsedOrder === dress.display_order) return
     setSavingOrder(dress.id)
     try {
-      // Check if another dress already has this order number
-      if (parsedOrder !== null) {
-        const conflict = dresses.find(d => d.id !== dress.id && d.display_order === parsedOrder)
-        if (conflict) {
-          // Swap: give the conflicting dress the old order number
-          const oldOrder = dress.display_order || null
-          await adminUpdateDress(conflict.id, { display_order: oldOrder })
-          await adminUpdateDress(dress.id, { display_order: parsedOrder })
-          setDresses(prev =>
-            prev.map(d => {
-              if (d.id === dress.id) return { ...d, display_order: parsedOrder }
-              if (d.id === conflict.id) return { ...d, display_order: oldOrder }
-              return d
-            }).sort(sortByOrder)
-          )
-        } else {
-          await adminUpdateDress(dress.id, { display_order: parsedOrder })
-          setDresses(prev =>
-            prev.map(d => d.id === dress.id ? { ...d, display_order: parsedOrder } : d).sort(sortByOrder)
-          )
-        }
-      } else {
-        await adminUpdateDress(dress.id, { display_order: null })
-        setDresses(prev =>
-          prev.map(d => d.id === dress.id ? { ...d, display_order: null } : d).sort(sortByOrder)
-        )
-      }
-    } catch (err) { alert('Error saving order') }
+      await adminUpdateDress(dress.id, { display_order: parsedOrder })
+      // Reload everything to see the result of conflict resolution (nullified others)
+      await loadDresses()
+    } catch (err) { 
+      alert('Error saving order') 
+      loadDresses() // Rollback/Refresh
+    }
     setSavingOrder(null)
   }
 

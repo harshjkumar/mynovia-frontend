@@ -90,9 +90,9 @@ export default function DressesPage() {
       <div id="collections" className="bg-[#FAF9F6] relative z-20">
         
         {/* Categories Grid Header */}
-        <section className="pt-24 pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
+        <section className="pt-12 pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
           <h2 className="font-heading text-4xl lg:text-5xl text-[#333] mb-4 font-light">Shop by Category</h2>
-          <p className="font-body text-[#7a7a7a] text-sm max-w-xl mx-auto mb-16">
+          <p className="font-body text-[#7a7a7a] text-sm max-w-xl mx-auto mb-8">
             Explore our curated collections designed to make you shine on your unforgettable day.
           </p>
 
@@ -194,7 +194,6 @@ export default function DressesPage() {
                                 <img src={imgUrl} alt={dress.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                               </div>
                               <h3 className="font-heading text-2xl text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-1 truncate">{dress.name}</h3>
-                              <p className="font-sans text-[12px] text-[#b3b3b3] uppercase tracking-wider">{cat.title} Dress</p>
                             </Link>
                           </motion.div>
                       )})}
@@ -375,7 +374,6 @@ export default function DressesPage() {
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
                       </div>
                       <h3 className="font-heading text-lg text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-2 line-clamp-2">{dress.name}</h3>
-                      <p className="font-sans text-[11px] text-[#b3b3b3] uppercase tracking-wider">{categoryName}</p>
                     </Link>
                   </motion.div>
                 );

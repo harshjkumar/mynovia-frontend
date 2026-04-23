@@ -45,32 +45,13 @@ export default function AdminAccessoriesPage() {
     if (parsedOrder === acc.display_order) return
     setSavingOrder(acc.id)
     try {
-      if (parsedOrder !== null) {
-        const conflict = accessories.find(a => a.id !== acc.id && a.display_order === parsedOrder)
-        if (conflict) {
-          const oldOrder = acc.display_order || null
-          await adminUpdateAccessory(conflict.id, { display_order: oldOrder })
-          await adminUpdateAccessory(acc.id, { display_order: parsedOrder })
-          setAccessories(prev =>
-            prev.map(a => {
-              if (a.id === acc.id) return { ...a, display_order: parsedOrder }
-              if (a.id === conflict.id) return { ...a, display_order: oldOrder }
-              return a
-            }).sort(sortByOrder)
-          )
-        } else {
-          await adminUpdateAccessory(acc.id, { display_order: parsedOrder })
-          setAccessories(prev =>
-            prev.map(a => a.id === acc.id ? { ...a, display_order: parsedOrder } : a).sort(sortByOrder)
-          )
-        }
-      } else {
-        await adminUpdateAccessory(acc.id, { display_order: null })
-        setAccessories(prev =>
-          prev.map(a => a.id === acc.id ? { ...a, display_order: null } : a).sort(sortByOrder)
-        )
-      }
-    } catch (err) { alert('Error saving order') }
+      await adminUpdateAccessory(acc.id, { display_order: parsedOrder })
+      // Reload everything to see the result of conflict resolution (nullified others)
+      await loadAccessories()
+    } catch (err) { 
+      alert('Error saving order') 
+      loadAccessories() // Rollback/Refresh
+    }
     setSavingOrder(null)
   }
 

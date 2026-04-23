@@ -90,9 +90,9 @@ export default function AccessoriesPage() {
       <div id="collections" className="bg-[#FAF9F6] relative z-20">
         
         {/* Categories Grid Header */}
-        <section className="pt-24 pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
+        <section className="pt-12 pb-12 px-6 md:px-12 max-w-[1800px] mx-auto text-center border-b border-[#E5E5E5]">
           <h2 className="font-heading text-4xl lg:text-5xl text-[#333] mb-4 font-light">Shop by Category</h2>
-          <p className="font-body text-[#7a7a7a] text-sm max-w-xl mx-auto mb-16">
+          <p className="font-body text-[#7a7a7a] text-sm max-w-xl mx-auto mb-8">
             Explore our curated collections of exquisite accessories to complement your bridal look.
           </p>
 
@@ -108,7 +108,6 @@ export default function AccessoriesPage() {
                   <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
                 </div>
                 <h3 className="font-heading text-2xl text-[#333] font-light mb-1 group-hover:text-gold transition-colors">{cat.title}</h3>
-                <span className="text-[10px] uppercase tracking-[2px] font-sans text-[#a09e9e] border-b border-transparent group-hover:border-gold group-hover:text-gold transition-colors pb-1">Shop Collection</span>
               </Link>
             ))}
           </div>
@@ -195,7 +194,6 @@ export default function AccessoriesPage() {
                                 <img src={imgUrl} alt={accessory.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                               </div>
                               <h3 className="font-heading text-2xl text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-1 truncate">{accessory.name}</h3>
-                              <p className="font-sans text-[12px] text-[#b3b3b3] uppercase tracking-wider">{cat.title} Accessory</p>
                             </Link>
                           </motion.div>
                       )})}
@@ -374,7 +372,6 @@ export default function AccessoriesPage() {
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-700" />
                       </div>
                       <h3 className="font-heading text-lg text-[#333] group-hover:text-[#f05f42] transition-colors font-light mb-2 line-clamp-2">{accessory.name}</h3>
-                      <p className="font-sans text-[11px] text-[#b3b3b3] uppercase tracking-wider">{categoryName}</p>
                     </Link>
                   </motion.div>
                 );

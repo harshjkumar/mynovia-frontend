@@ -87,9 +87,13 @@ export default function Navbar() {
   // Only apply transparent navbar on pages with dark hero sections
   const hasHero = isHome
   const isTransparent = hasHero && !scrolled && !mobileOpen
-  const navBg = isTransparent ? 'bg-gradient-to-b from-black/60 to-transparent' : 'bg-white shadow-sm'
-  const textColor = isTransparent ? 'text-white' : 'text-charcoal'
-  const hoverColor = isTransparent ? 'hover:text-white/70' : 'hover:text-gold'
+  const navBg = isTransparent 
+    ? 'bg-transparent' 
+    : scrolled 
+      ? 'bg-white/70 backdrop-blur-md shadow-sm' 
+      : 'bg-white shadow-sm'
+  const textColor = (isTransparent && !scrolled) ? 'text-white' : 'text-charcoal'
+  const hoverColor = (isTransparent && !scrolled) ? 'hover:text-white/70' : 'hover:text-gold'
 
   const navLinksRight = [
     { label: 'GALLERY', href: '/gallery' },
@@ -101,7 +105,7 @@ export default function Navbar() {
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${navBg}`}>
         <nav className="max-w-[1536px] mx-auto px-6">
-          <div className={`flex items-center justify-between transition-all duration-500 ${isTransparent ? 'h-[120px] lg:h-[160px]' : 'h-[80px]'}`}>
+          <div className="flex items-center justify-between h-[80px]">
             <div className="hidden lg:flex flex-1 items-center gap-8">
               {/* OUR STORY Link */}
               <Link href="/about" className={`text-[11px] font-sans font-medium tracking-[2.5px] uppercase transition-all duration-300 ${textColor} ${hoverColor}`}>
@@ -167,11 +171,9 @@ export default function Navbar() {
               <img 
                 src="/logo.png" 
                 alt="My Novia" 
-                className={`absolute w-auto object-contain transition-all duration-700 ease-in-out group-hover:scale-105 ${
-                  isTransparent ? 'h-32 md:h-48 lg:h-[220px] top-0' : 'h-24 md:h-32 lg:h-[130px] top-1/2 -translate-y-1/2'
-                }`} 
+                className="absolute w-auto object-contain transition-all duration-700 ease-in-out group-hover:scale-105 h-24 md:h-32 lg:h-[130px] top-1/2 -translate-y-1/2"
                 style={{ 
-                  filter: isTransparent 
+                  filter: (isTransparent && !scrolled)
                     ? 'drop-shadow(0px 2px 4px rgba(0,0,0,0.5))' 
                     : 'drop-shadow(0px 1px 1px rgba(0,0,0,0.8)) drop-shadow(0px 0px 4px rgba(0,0,0,0.3))',
                   imageRendering: '-webkit-optimize-contrast'
